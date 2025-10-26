@@ -16,11 +16,10 @@ const meta: Meta<typeof Button> = {
   },
   tags: ["autodocs"],
   parameters: {
-    myAddonParameter: `
-<MyComponent boolProp scalarProp={1} complexProp={{ foo: 1, bar: '2' }}>
-  <SomeOtherComponent funcProp={(a) => a.id} />
-</MyComponent>
-`,
+    // Usage panel demo: connect this component to real main component from Infa
+    usage: {
+      mcComponentIds: ["mc_kpGXAvqI"], // Button component from Infa
+    },
   },
 };
 
@@ -34,11 +33,21 @@ export const Primary: Story = {
     primary: true,
     label: "Button",
   },
+  parameters: {
+    usage: {
+      mcComponentIds: ["mc_kpGXAvqI"], // Real Button component from Infa
+    },
+  },
 };
 
 export const Secondary: Story = {
   args: {
     label: "Button",
+  },
+  parameters: {
+    usage: {
+      mcComponentIds: ["mc_kpGXAvqI"], // Real Button component from Infa
+    },
   },
 };
 

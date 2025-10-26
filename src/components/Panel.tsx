@@ -82,7 +82,7 @@ try {
 
 export const Panel: React.FC<PanelProps> = memo(function UsagePanel(props) {
   const theme = useTheme();
-  
+
   // Get mcComponentIds from story parameters
   const params = useParameter<UsageParameters>("usage", { mcComponentIds: [] });
   const mcComponentIds = params.mcComponentIds || [];
@@ -130,7 +130,7 @@ export const Panel: React.FC<PanelProps> = memo(function UsagePanel(props) {
               information.
             </EmptyStateText>
             <CodeExample>
-{`// Button.stories.tsx
+              {`// Button.stories.tsx
 export default {
   component: Button,
   parameters: {
