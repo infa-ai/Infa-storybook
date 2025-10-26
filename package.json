@@ -3,7 +3,13 @@
   "version": "0.0.0",
   "description": "Usage tab This tab connects Storybook documentation with live product usage, references, and deviations",
   "keywords": [
-    "component", "usage", "reference", "deviation", "measure", "analytics", "storybook-addons"
+    "component",
+    "usage",
+    "reference",
+    "deviation",
+    "measure",
+    "analytics",
+    "storybook-addons"
   ],
   "repository": {
     "type": "git",
@@ -41,7 +47,8 @@
     "release": "npm run build && auto shipit",
     "eject-ts": "zx scripts/eject-typescript.js",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "fetch-usage-data": "node scripts/infa-integration.js"
   },
   "dependencies": {
     "@storybook/icons": "^1.4.0"
@@ -55,6 +62,7 @@
     "@vitejs/plugin-react": "^5.1.0",
     "auto": "^11.3.0",
     "boxen": "^7.1.1",
+    "dotenv": "^17.2.3",
     "npm-run-all2": "^6.2.3",
     "prettier": "^3.3.3",
     "prompts": "^2.4.2",
@@ -94,7 +102,15 @@
   "storybook": {
     "displayName": "Usage",
     "supportedFrameworks": [
-      "react", "vue", "angular", "web-components", "ember", "html", "svelte", "preact", "react-native"
+      "react",
+      "vue",
+      "angular",
+      "web-components",
+      "ember",
+      "html",
+      "svelte",
+      "preact",
+      "react-native"
     ],
     "icon": "https://user-images.githubusercontent.com/321738/63501763-88dbf600-c4cc-11e9-96cd-94adadc2fd72.png"
   }
