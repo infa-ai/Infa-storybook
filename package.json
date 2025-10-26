@@ -1,17 +1,23 @@
 {
-  "name": "storybook-addon-kit",
+  "name": "storybook-infa-usage",
   "version": "0.0.0",
-  "description": "everything you need to build a Storybook addon",
+  "description": "Usage tab This tab connects Storybook documentation with live product usage, references, and deviations",
   "keywords": [
+    "component",
+    "usage",
+    "reference",
+    "deviation",
+    "measure",
+    "analytics",
     "storybook-addons"
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/storybookjs/storybook-addon-kit"
+    "url": "https://github.com/infa-ai/Infa-storybook"
   },
   "type": "module",
   "license": "MIT",
-  "author": "package-author",
+  "author": "Infa <contact@infa.ai>",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -23,7 +29,6 @@
       "import": "./dist/preview.js",
       "require": "./dist/preview.cjs"
     },
-    "./preset": "./dist/preset.cjs",
     "./manager": "./dist/manager.js",
     "./package.json": "./package.json"
   },
@@ -34,16 +39,20 @@
     "*.d.ts"
   ],
   "scripts": {
-    "postinstall": "node scripts/welcome.js",
     "build": "tsup",
     "build:watch": "npm run build -- --watch",
     "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint . --ext .ts,.tsx,.js,.jsx --max-warnings 0",
+    "lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",
+    "type-check": "tsc --noEmit",
     "start": "run-p build:watch \"storybook --quiet\"",
     "prerelease": "zx scripts/prepublish-checks.js",
     "release": "npm run build && auto shipit",
+    "prepublish-checks": "zx scripts/prepublish-checks.js",
     "eject-ts": "zx scripts/eject-typescript.js",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "fetch-usage-data": "node scripts/infa-integration.js"
   },
   "dependencies": {
     "@storybook/icons": "^1.4.0"
@@ -54,9 +63,10 @@
     "@types/node": "^22",
     "@types/react": "^18.2.65",
     "@types/react-dom": "^18.2.21",
-    "@vitejs/plugin-react": "^4.2.1",
-    "auto": "^11.1.1",
+    "@vitejs/plugin-react": "^5.1.0",
+    "auto": "^11.3.0",
     "boxen": "^7.1.1",
+    "dotenv": "^17.2.3",
     "npm-run-all2": "^6.2.3",
     "prettier": "^3.3.3",
     "prompts": "^2.4.2",
@@ -66,11 +76,18 @@
     "ts-dedent": "^2.2.0",
     "tsup": "^8.2.4",
     "typescript": "^5.8.2",
-    "vite": "^5.3.5",
+    "vite": "^7.1.12",
     "zx": "^8.4.1"
   },
   "peerDependencies": {
     "storybook": "^9.0.0"
+  },
+  "overrides": {
+    "@octokit/request-error": "^5.1.1",
+    "@octokit/request": "^8.4.1",
+    "@octokit/plugin-paginate-rest": "^9.2.2",
+    "@octokit/core": "^5.2.0",
+    "@octokit/graphql": "^7.1.0"
   },
   "publishConfig": {
     "access": "public"
@@ -84,15 +101,20 @@
     ],
     "previewEntries": [
       "src/preview.ts"
-    ],
-    "nodeEntries": [
-      "src/preset.ts"
     ]
   },
   "storybook": {
-    "displayName": "Addon Kit",
+    "displayName": "Usage",
     "supportedFrameworks": [
-      "supported-frameworks"
+      "react",
+      "vue",
+      "angular",
+      "web-components",
+      "ember",
+      "html",
+      "svelte",
+      "preact",
+      "react-native"
     ],
     "icon": "https://user-images.githubusercontent.com/321738/63501763-88dbf600-c4cc-11e9-96cd-94adadc2fd72.png"
   }

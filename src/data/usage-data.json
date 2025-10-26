@@ -1,0 +1,74 @@
+{
+  "mc_kpGXAvqI": {
+    "title": "Button Updated",
+    "description": "Button is used to initiate actions on a page or form.\n\n![Image displaying each variation of button, from left: Secondary, Primary, Danger, Invisible.](https://github.com/primer/design/assets/980622/8a02c179-61d1-48a6-8dd8-7a0ccdfecef7)",
+    "query": null,
+    "external_links": [
+      {
+        "url": "https://primer.style/components/button",
+        "title": "Primer Documentation"
+      },
+      {
+        "url": "https://primer.style/react/storybook?path=/story/components-button--default&globals=colorScheme%3Alight",
+        "title": "React Storybook"
+      }
+    ],
+    "labels": [],
+    "component_views": [
+      {
+        "url": "https://github.com/primer/react",
+        "code": "",
+        "title": "Code Repository Button",
+        "x_path": "//*[@id=\":R55ab:\"]",
+        "page_id": null,
+        "screenshot": "",
+        "is_domain_specific": false
+      },
+      {
+        "url": "https://github.com/primer/react",
+        "code": "",
+        "title": "Repository Watch Button",
+        "x_path": "//*[@id=\":re:\"]",
+        "page_id": null,
+        "screenshot": "",
+        "is_domain_specific": false
+      },
+      {
+        "url": "https://github.com/primer/react",
+        "code": null,
+        "title": "Branch Select Button",
+        "x_path": "//*[@id=\"branch-picker-repos-header-ref-selector\"]",
+        "page_id": null,
+        "screenshot": null,
+        "is_domain_specific": false
+      },
+      {
+        "url": "https://github.com/search?q=primer&type=repositories",
+        "code": "",
+        "title": "Star Button",
+        "x_path": "//body/div/div[5]/main/react-app/div/div/div/div/div/div[2]/div[2]/div/div/div[4]/div/div/div/div/div[2]/div/button",
+        "page_id": null,
+        "screenshot": "",
+        "is_domain_specific": false
+      },
+      {
+        "url": "https://github.com/new",
+        "code": "",
+        "title": "Create Repository Button",
+        "x_path": "/html/body/div/div[5]/main/react-app/div/form/div[6]/button",
+        "page_id": null,
+        "screenshot": "",
+        "is_domain_specific": false
+      },
+      {
+        "url": "https://github.com/",
+        "code": "<a href=\"/new\" data-hydro-click=\"{\"event_type\":\"dashboard.click\",\"payload\":{\"event_context\":\"REPOSITORIES\",\"target\":\"NEW_REPOSITORY_BUTTON\",\"dashboard_context\":\"user\",\"dashboard_version\":2,\"user_id\":190449449,\"metadata\":null,\"originating_url\":\"https://github.com/dashboard/my_top_repositories?location=left\"}}\" data-hydro-click-hmac=\"57612d4f86d4f808b3ba61a70eb43a0547519027b055769c0d236cea6b3263d0\" data-view-component=\"true\" class=\"Button--primary Button--small Button\"><span class=\"Button-content\"><span class=\"Button-visual Button-leadingVisual\"><svg aria-hidden=\"true\" height=\"16\" viewBox=\"0 0 16 16\" version=\"1.1\" width=\"16\" data-view-component=\"true\" class=\"octicon octicon-repo\">...</span><span class=\"Button-label\">New</span></span></a>",
+        "title": "New Repository Button",
+        "x_path": "//*[contains(@class, 'Button--primary Button--small Button')]",
+        "page_id": null,
+        "screenshot": "https://lchwovxxbgcdycaqmftj.supabase.co/storage/v1/object/public/public_screenshots/b_29btSDq0/screenshot-cv_9sdFEp70-251026121401-0@2x.png",
+        "is_domain_specific": false
+      }
+    ]
+  }
+}

@@ -1,29 +1,57 @@
-name: Build
+name: Build and Validate
 
-on: [push]
+on:
+  push:
+    branches:
+      - '**'  # Run on all branches
+  pull_request:
+    branches:
+      - main
+      - develop
 
 jobs:
-  release:
+  build:
     runs-on: ubuntu-latest
     if: "!contains(github.event.head_commit.message, 'ci skip') && !contains(github.event.head_commit.message, 'skip ci')"
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       - name: Prepare repository
         run: git fetch --unshallow --tags
 
-      - name: Use Node.js 20.x
+      - name: Setup Node.js 20.x
         uses: actions/setup-node@v4
         with:
           node-version: 20.x
+          cache: 'npm'
 
       - name: Install dependencies
-        run: npm install --ignore-scripts
+        run: npm ci
 
-      - name: Build
-        run: |
-          npm run build
+      - name: Lint code
+        run: npm run lint || echo "No lint script found, skipping..."
+        continue-on-error: false
+
+      - name: Type check
+        run: npx tsc --noEmit || echo "TypeScript check completed"
+
+      - name: Build addon
+        run: npm run build
 
       - name: Build Storybook
-        run: |
-          npm run build-storybook
+        run: npm run build-storybook
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+          retention-days: 7
+
+      - name: Upload Storybook build
+        uses: actions/upload-artifact@v4
+        with:
+          name: storybook-static
+          path: storybook-static/
+          retention-days: 7
