@@ -7,8 +7,8 @@
  * It's an optional example that users can adapt for fetching usage data from Infa API.
  *
  * Usage:
- *   1. Set INFA_API_KEY environment variable
- *   2. Run: node scripts/infa-integration.js
+ *   1. Set INFA_API_KEY in .env file or environment variable
+ *   2. Run: npm run fetch-usage-data
  *   3. Generates src/data/usage-data.json with component information
  *
  * The script:
@@ -17,6 +17,7 @@
  *   - Generates a JSON file with component titles
  */
 
+import "dotenv/config";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
