@@ -23,7 +23,6 @@
       "import": "./dist/preview.js",
       "require": "./dist/preview.cjs"
     },
-    "./preset": "./dist/preset.cjs",
     "./manager": "./dist/manager.js",
     "./package.json": "./package.json"
   },
@@ -53,8 +52,8 @@
     "@types/node": "^22",
     "@types/react": "^18.2.65",
     "@types/react-dom": "^18.2.21",
-    "@vitejs/plugin-react": "^4.2.1",
-    "auto": "^11.1.1",
+    "@vitejs/plugin-react": "^5.1.0",
+    "auto": "^11.3.0",
     "boxen": "^7.1.1",
     "npm-run-all2": "^6.2.3",
     "prettier": "^3.3.3",
@@ -65,11 +64,18 @@
     "ts-dedent": "^2.2.0",
     "tsup": "^8.2.4",
     "typescript": "^5.8.2",
-    "vite": "^5.3.5",
+    "vite": "^7.1.12",
     "zx": "^8.4.1"
   },
   "peerDependencies": {
     "storybook": "^9.0.0"
+  },
+  "overrides": {
+    "@octokit/request-error": "^5.1.1",
+    "@octokit/request": "^8.4.1",
+    "@octokit/plugin-paginate-rest": "^9.2.2",
+    "@octokit/core": "^5.2.0",
+    "@octokit/graphql": "^7.1.0"
   },
   "publishConfig": {
     "access": "public"
@@ -83,9 +89,6 @@
     ],
     "previewEntries": [
       "src/preview.ts"
-    ],
-    "nodeEntries": [
-      "src/preset.ts"
     ]
   },
   "storybook": {
