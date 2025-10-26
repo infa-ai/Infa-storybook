@@ -1,5 +1,5 @@
 /**
- * A decorator is a way to wrap a story in extra “rendering” functionality. Many addons define decorators
+ * A decorator is a way to wrap a story in extra "rendering" functionality. Many addons define decorators
  * in order to augment stories:
  * - with extra rendering
  * - gather details about how a story is rendered
@@ -10,8 +10,6 @@
  */
 import type { ProjectAnnotations, Renderer } from "storybook/internal/types";
 
-import { KEY } from "./constants";
-import { withGlobals } from "./withGlobals";
 import { withRoundTrip } from "./withRoundTrip";
 
 /**
@@ -20,10 +18,7 @@ import { withRoundTrip } from "./withRoundTrip";
  */
 
 const preview: ProjectAnnotations<Renderer> = {
-  decorators: [withGlobals, withRoundTrip],
-  initialGlobals: {
-    [KEY]: false,
-  },
+  decorators: [withRoundTrip],
 };
 
 export default preview;
