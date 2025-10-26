@@ -44,6 +44,60 @@ const ComponentId = styled.p(({ theme }) => ({
   fontFamily: "monospace",
 }));
 
+const ComponentDescription = styled.p(({ theme }) => ({
+  margin: "0.5rem 0 0 0",
+  fontSize: "12px",
+  color: theme.color.defaultText,
+  lineHeight: 1.4,
+}));
+
+const SectionTitle = styled.h4(({ theme }) => ({
+  margin: "1rem 0 0.5rem 0",
+  fontSize: "13px",
+  fontWeight: 600,
+  color: theme.color.defaultText,
+}));
+
+const DataList = styled.ul(({ theme }) => ({
+  margin: "0.5rem 0 0 0",
+  padding: "0 0 0 1.5rem",
+  fontSize: "12px",
+  color: theme.color.defaultText,
+  lineHeight: 1.6,
+}));
+
+const DataItem = styled.li(({ theme }) => ({
+  marginBottom: "0.25rem",
+}));
+
+const Link = styled.a(({ theme }) => ({
+  color: theme.color.secondary,
+  textDecoration: "none",
+  "&:hover": {
+    textDecoration: "underline",
+  },
+}));
+
+const Label = styled.span(({ theme }) => ({
+  display: "inline-block",
+  padding: "2px 8px",
+  borderRadius: "3px",
+  marginRight: "0.5rem",
+  marginBottom: "0.25rem",
+  fontSize: "11px",
+  fontWeight: 500,
+}));
+
+const CodeBlock = styled.pre(({ theme }) => ({
+  margin: "0.5rem 0 0 0",
+  padding: "0.5rem",
+  background: theme.background.app,
+  borderRadius: "4px",
+  fontSize: "11px",
+  overflow: "auto",
+  maxHeight: "150px",
+}));
+
 const EmptyState = styled.div(({ theme }) => ({
   textAlign: "center",
   padding: "2rem",
@@ -106,6 +160,111 @@ export const Panel: React.FC<PanelProps> = memo(function UsagePanel(props) {
                       {component?.title || "Unknown Component"}
                     </ComponentTitle>
                     <ComponentId>ID: {componentId}</ComponentId>
+
+                    {component?.description && (
+                      <ComponentDescription>
+                        {component.description}
+                      </ComponentDescription>
+                    )}
+
+                    {component?.query && (
+                      <>
+                        <SectionTitle>Query</SectionTitle>
+                        <CodeBlock>{component.query}</CodeBlock>
+                      </>
+                    )}
+
+                    {component?.external_links &&
+                      component.external_links.length > 0 && (
+                        <>
+                          <SectionTitle>External Links</SectionTitle>
+                          <DataList>
+                            {component.external_links.map((link, idx) => (
+                              <DataItem key={idx}>
+                                <Link
+                                  href={link.url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                >
+                                  {link.title}
+                                </Link>
+                              </DataItem>
+                            ))}
+                          </DataList>
+                        </>
+                      )}
+
+                    {component?.labels && component.labels.length > 0 && (
+                      <>
+                        <SectionTitle>Labels</SectionTitle>
+                        <div style={{ marginTop: "0.5rem" }}>
+                          {component.labels.map((label, idx) => (
+                            <Label
+                              key={idx}
+                              style={{
+                                backgroundColor:
+                                  label.color || theme.color.mediumdark,
+                                color: "#fff",
+                              }}
+                              title={label.description || undefined}
+                            >
+                              {label.title}
+                            </Label>
+                          ))}
+                        </div>
+                      </>
+                    )}
+
+                    {component?.component_views &&
+                      component.component_views.length > 0 && (
+                        <>
+                          <SectionTitle>
+                            Component Views ({component.component_views.length})
+                          </SectionTitle>
+                          <DataList>
+                            {component.component_views.map((view, idx) => (
+                              <DataItem key={idx}>
+                                <strong>{view.title}</strong>
+                                <br />
+                                <Link
+                                  href={view.url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                >
+                                  {view.url}
+                                </Link>
+                                {view.screenshot && (
+                                  <>
+                                    <br />
+                                    <span
+                                      style={{
+                                        fontSize: "11px",
+                                        color: theme.color.mediumdark,
+                                      }}
+                                    >
+                                      Screenshot: {view.screenshot}
+                                    </span>
+                                  </>
+                                )}
+                                {view.x_path && (
+                                  <>
+                                    <br />
+                                    <span
+                                      style={{
+                                        fontSize: "11px",
+                                        color: theme.color.mediumdark,
+                                      }}
+                                    >
+                                      XPath: {view.x_path}
+                                    </span>
+                                  </>
+                                )}
+                              </DataItem>
+                            ))}
+                          </DataList>
+                        </>
+                      )}
+
                     {!component && (
                       <p
                         style={{

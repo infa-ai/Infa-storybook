@@ -120,6 +120,11 @@ async function fetchComponentData(componentIds) {
     data.forEach((item) => {
       result[item.id] = {
         title: item.title || "Untitled Component",
+        description: item.description || null,
+        query: item.query || null,
+        external_links: item.external_links || [],
+        labels: item.labels || [],
+        component_views: item.component_views || [],
       };
     });
 
