@@ -1,5 +1,9 @@
 # Infa Storybook Addon
 
+[![npm version](https://badge.fury.io/js/storybook-infa-usage.svg)](https://www.npmjs.com/package/storybook-infa-usage)
+[![npm downloads](https://img.shields.io/npm/dm/storybook-infa-usage.svg)](https://www.npmjs.com/package/storybook-infa-usage)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 A Storybook addon that connects your component documentation with real-world product usage. See where and how your design system components are actually being used across your products—directly in Storybook.
 
 ## The Problem
@@ -72,7 +76,7 @@ To use this addon, you'll need:
 ## Installation
 
 ```bash
-npm install --save-dev storybook-infa-usage
+npm i storybook-infa-usage
 ```
 
 ## Quick Start
