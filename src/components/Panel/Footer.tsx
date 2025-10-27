@@ -25,6 +25,14 @@ export const Footer: React.FC = () => {
         >
           Docs
         </FooterLink>
+        {" · "}
+        <FooterLink
+          href="https://github.com/infa-ai/Infa-storybook"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          GitHub
+        </FooterLink>
       </FooterText>
     </FooterWrapper>
   );
