@@ -2,7 +2,7 @@
  * ComponentHeader component - Displays component title, labels, description, and external links
  */
 
-import React from "react";
+import React, { useState } from "react";
 import type { ComponentData } from "../../types";
 import {
   ComponentHeaderWrapper,
@@ -13,6 +13,7 @@ import {
   ExternalLinksContainer,
   ExternalLink,
   ExternalLinkIcon,
+  ViewMoreTextButton,
 } from "./styles";
 
 interface ComponentHeaderProps {
@@ -22,12 +23,22 @@ interface ComponentHeaderProps {
   externalLinks: ComponentData["external_links"];
 }
 
+const MAX_DESCRIPTION_LENGTH = 200;
+
 export const ComponentHeader: React.FC<ComponentHeaderProps> = ({
   title,
   description,
   labels,
   externalLinks,
 }) => {
+  const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
+
+  // Check if description needs truncation
+  const needsTruncation = description && description.length > MAX_DESCRIPTION_LENGTH;
+  const displayedDescription = needsTruncation && !isDescriptionExpanded
+    ? description.substring(0, MAX_DESCRIPTION_LENGTH) + "..."
+    : description;
+
   return (
     <ComponentHeaderWrapper>
       <ComponentTitle>{title}</ComponentTitle>
@@ -46,7 +57,18 @@ export const ComponentHeader: React.FC<ComponentHeaderProps> = ({
         </LabelsContainer>
       )}
 
-      {description && <ComponentDescription>{description}</ComponentDescription>}
+      {description && (
+        <>
+          <ComponentDescription>{displayedDescription}</ComponentDescription>
+          {needsTruncation && (
+            <ViewMoreTextButton
+              onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
+            >
+              {isDescriptionExpanded ? "View less" : "View more"}
+            </ViewMoreTextButton>
+          )}
+        </>
+      )}
 
       {externalLinks && externalLinks.length > 0 && (
         <ExternalLinksContainer>

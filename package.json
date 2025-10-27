@@ -55,7 +55,9 @@
     "fetch-usage-data": "node scripts/infa-integration.js"
   },
   "dependencies": {
-    "@storybook/icons": "^1.4.0"
+    "@storybook/icons": "^1.4.0",
+    "@types/react-syntax-highlighter": "^15.5.13",
+    "react-syntax-highlighter": "^16.0.0"
   },
   "devDependencies": {
     "@storybook/addon-docs": "^9.1.0",
