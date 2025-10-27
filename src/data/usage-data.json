@@ -16,6 +16,7 @@
     "labels": [],
     "component_views": [
       {
+        "id": "cv_FVKTkaQG",
         "url": "https://github.com/primer/react",
         "code": "",
         "title": "Code Repository Button",
@@ -25,6 +26,7 @@
         "is_domain_specific": false
       },
       {
+        "id": "cv_wVZ1yIF0",
         "url": "https://github.com/primer/react",
         "code": "",
         "title": "Repository Watch Button",
@@ -34,6 +36,7 @@
         "is_domain_specific": false
       },
       {
+        "id": "cv_YcD5KYUc",
         "url": "https://github.com/primer/react",
         "code": null,
         "title": "Branch Select Button",
@@ -43,6 +46,7 @@
         "is_domain_specific": false
       },
       {
+        "id": "cv_itqBIPH8",
         "url": "https://github.com/search?q=primer&type=repositories",
         "code": "",
         "title": "Star Button",
@@ -52,6 +56,7 @@
         "is_domain_specific": false
       },
       {
+        "id": "cv_SHxKoWYY",
         "url": "https://github.com/new",
         "code": "",
         "title": "Create Repository Button",
@@ -61,6 +66,7 @@
         "is_domain_specific": false
       },
       {
+        "id": "cv_3OnRAooo",
         "url": "https://github.com/",
         "code": "<a href=\"/new\" data-hydro-click=\"{\"event_type\":\"dashboard.click\",\"payload\":{\"event_context\":\"REPOSITORIES\",\"target\":\"NEW_REPOSITORY_BUTTON\",\"dashboard_context\":\"user\",\"dashboard_version\":2,\"user_id\":190449449,\"metadata\":null,\"originating_url\":\"https://github.com/dashboard/my_top_repositories?location=left\"}}\" data-hydro-click-hmac=\"57612d4f86d4f808b3ba61a70eb43a0547519027b055769c0d236cea6b3263d0\" data-view-component=\"true\" class=\"Button--primary Button--small Button\"><span class=\"Button-content\"><span class=\"Button-visual Button-leadingVisual\"><svg aria-hidden=\"true\" height=\"16\" viewBox=\"0 0 16 16\" version=\"1.1\" width=\"16\" data-view-component=\"true\" class=\"octicon octicon-repo\">...</span><span class=\"Button-label\">New</span></span></a>",
         "title": "New Repository Button",
@@ -69,6 +75,7 @@
         "screenshot": "https://lchwovxxbgcdycaqmftj.supabase.co/storage/v1/object/public/public_screenshots/b_29btSDq0/screenshot-cv_9sdFEp70-251026121401-0@2x.png",
         "is_domain_specific": false
       }
-    ]
+    ],
+    "board_id": "b_29btSDq0"
   }
 }

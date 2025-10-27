@@ -125,6 +125,7 @@ async function fetchComponentData(componentIds) {
         external_links: item.external_links || [],
         labels: item.labels || [],
         component_views: item.component_views || [],
+        board_id: item.board_id || null,
       };
     });
 

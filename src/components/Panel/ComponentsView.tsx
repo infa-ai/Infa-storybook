@@ -3,6 +3,7 @@
  */
 
 import React from "react";
+import { Badge } from "storybook/internal/components";
 import type { ComponentData } from "../../types";
 import { ComponentHeader } from "./ComponentHeader";
 import { ComponentViewCard } from "./ComponentViewCard";
@@ -45,17 +46,26 @@ export const ComponentsView: React.FC<ComponentsViewProps> = ({
             {data.component_views && data.component_views.length > 0 && (
               <>
                 <SectionTitle>
-                  Component Views ({data.component_views.length})
+                  Component Views{" "}
+                  <Badge status="neutral">{data.component_views.length}</Badge>
                 </SectionTitle>
                 <ComponentViewsGrid>
                   {visibleViews.map((view, idx) => (
-                    <ComponentViewCard key={idx} view={view} />
+                    <ComponentViewCard
+                      key={idx}
+                      view={view}
+                      boardId={data.board_id}
+                    />
                   ))}
                 </ComponentViewsGrid>
 
                 {hasMore && !isExpanded && (
                   <ViewMoreButton onClick={() => onToggleExpanded(id)}>
-                    View More ({data.component_views.length - 5} more)
+                    View More{" "}
+                    <Badge status="neutral">
+                      {data.component_views.length - 5}
+                    </Badge>{" "}
+                    more
                   </ViewMoreButton>
                 )}
 

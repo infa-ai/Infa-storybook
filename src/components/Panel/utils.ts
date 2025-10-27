@@ -25,6 +25,17 @@ export const truncateUrl = (url: string, maxLength: number = 60): string => {
 };
 
 /**
+ * Formats a URL for display by removing the protocol (http:// or https://)
+ */
+export const formatUrlForDisplay = (url: string): string => {
+  try {
+    return url.replace(/^https?:\/\//, '');
+  } catch {
+    return url;
+  }
+};
+
+/**
  * Extracts board_id and component_view_id from screenshot URL
  * Example: https://lchwovxxbgcdycaqmftj.supabase.co/storage/v1/object/public/public_screenshots/b_29btSDq0/screenshot-cv_9sdFEp70-251026121401-0@2x.png
  */
@@ -58,9 +69,21 @@ export const generateInfaLink = (
   boardId: string | null,
   componentViewId: string | null,
 ): string => {
-  return boardId && componentViewId
+  const infaLink = boardId && componentViewId
     ? `https://infa.ai/open?board=${boardId}&componentView=${componentViewId}`
     : view.url;
+
+  // Log for verification
+  console.log(`[Infa Link Generation]`, {
+    title: view.title,
+    boardId,
+    componentViewId,
+    hasScreenshot: !!view.screenshot,
+    generatedLink: infaLink,
+    isInfaLink: infaLink.startsWith('https://infa.ai/open')
+  });
+
+  return infaLink;
 };
 
 /**
@@ -70,6 +93,7 @@ export interface GroupedView extends ComponentView {
   componentId: string;
   componentTitle: string;
   componentLabels: ComponentData["labels"];
+  componentBoardId?: string;
 }
 
 /**
@@ -97,6 +121,7 @@ export const groupViewsByDomain = (
         componentId: id,
         componentTitle: data.title,
         componentLabels: data.labels,
+        componentBoardId: data.board_id,
       });
     });
   });

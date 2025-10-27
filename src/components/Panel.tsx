@@ -15,6 +15,8 @@ import { ViewToggle, type ViewMode } from "./Panel/ViewToggle";
 import { ComponentsView } from "./Panel/ComponentsView";
 import { DomainsView } from "./Panel/DomainsView";
 import { EmptyState } from "./Panel/EmptyState";
+import { Footer } from "./Panel/Footer";
+import { SyncModal } from "./Panel/SyncModal";
 
 // Styles
 import { PanelContent } from "./Panel/styles";
@@ -46,6 +48,7 @@ export const Panel: React.FC<PanelProps> = memo(function UsagePanel(props) {
   const [expandedComponents, setExpandedComponents] = useState<
     Record<string, boolean>
   >({});
+  const [isSyncModalOpen, setIsSyncModalOpen] = useState(false);
 
   // Get mcComponentIds from story parameters
   const params = useParameter<UsageParameters>("usage", { mcComponentIds: [] });
@@ -60,6 +63,9 @@ export const Panel: React.FC<PanelProps> = memo(function UsagePanel(props) {
       (c): c is { id: string; data: ComponentData } => c.data !== undefined,
     );
 
+  // Extract board_id from first component that has one
+  const boardId = components.find((c) => c.data.board_id)?.data.board_id;
+
   // Handler for toggling expanded state of a component
   const toggleExpanded = (componentId: string) => {
     setExpandedComponents((prev) => ({
@@ -73,7 +79,12 @@ export const Panel: React.FC<PanelProps> = memo(function UsagePanel(props) {
       <PanelContent>
         {hasComponents && components.length > 0 ? (
           <>
-            <ViewToggle viewMode={viewMode} onViewModeChange={setViewMode} />
+            <ViewToggle
+              viewMode={viewMode}
+              onViewModeChange={setViewMode}
+              boardId={boardId}
+              onSyncClick={() => setIsSyncModalOpen(true)}
+            />
 
             {viewMode === "components" ? (
               <ComponentsView
@@ -88,6 +99,12 @@ export const Panel: React.FC<PanelProps> = memo(function UsagePanel(props) {
         ) : (
           <EmptyState />
         )}
+        <Footer />
+        
+        <SyncModal
+          isOpen={isSyncModalOpen}
+          onClose={() => setIsSyncModalOpen(false)}
+        />
       </PanelContent>
     </AddonPanel>
   );
