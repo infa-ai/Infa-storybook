@@ -63,7 +63,7 @@ export default defineConfig(async (options) => {
       dts: {
         resolve: true,
       },
-      format: ["esm", "cjs"],
+      format: ["esm"],
       platform: "neutral",
       target: NODE_TARGET,
       external: [...globalManagerPackages, ...globalPreviewPackages],
@@ -94,7 +94,7 @@ export default defineConfig(async (options) => {
       dts: {
         resolve: true,
       },
-      format: ["esm", "cjs"],
+      format: ["esm"],
       platform: "browser",
       target: BROWSER_TARGETS,
       external: globalPreviewPackages,
@@ -104,11 +104,12 @@ export default defineConfig(async (options) => {
   // node entries are entries meant to be used in node-only
   // this is useful for presets, which are loaded by Storybook when setting up configurations
   // they won't have types generated for them as they're usually loaded automatically by Storybook
+  // Note: Storybook 10 uses ESM-only, so node entries should also be ESM
   if (nodeEntries.length) {
     configs.push({
       ...commonConfig,
       entry: nodeEntries,
-      format: ["cjs"],
+      format: ["esm"],
       platform: "node",
       target: NODE_TARGET,
     });
