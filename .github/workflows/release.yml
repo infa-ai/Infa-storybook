@@ -7,7 +7,7 @@ on:
 
 permissions:
   id-token: write # Required for OIDC with npm trusted publishers
-  contents: read
+  contents: write # Required for auto shipit to push tags
 
 jobs:
   release:
