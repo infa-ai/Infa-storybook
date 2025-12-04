@@ -2,12 +2,12 @@ import { readFile } from "node:fs/promises";
 
 import { defineConfig, type Options } from "tsup";
 
-import {
-  BROWSER_TARGETS,
-  NODE_TARGET,
-} from "storybook/internal/builder-manager";
 import { globalPackages as globalManagerPackages } from "storybook/internal/manager/globals";
 import { globalPackages as globalPreviewPackages } from "storybook/internal/preview/globals";
+
+// Define targets locally since storybook/internal/builder-manager is not exported in Storybook 10.1.4
+const BROWSER_TARGETS = ["chrome131", "edge134", "firefox136", "safari18.3", "ios18.3", "opera117"];
+const NODE_TARGET = "node20";
 
 type BundlerConfig = {
   bundler?: {
