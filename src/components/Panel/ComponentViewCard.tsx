@@ -72,8 +72,8 @@ export const ComponentViewCard: React.FC<ComponentViewCardProps> = ({
         <div
           style={{
             paddingLeft: "16px",
-            paddingRight: "16px",
-            paddingBottom: "12px",
+            paddingRight: "6px",
+            paddingBottom: "6px",
           }}
         >
           <XPathContainer>

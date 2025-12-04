@@ -202,9 +202,9 @@ export const ComponentsView: React.FC<ComponentsViewProps> = ({
           groupBy === "all"
             ? isExpanded
               ? data.component_views
-              : data.component_views.slice(0, 5)
+              : data.component_views.slice(0, 6)
             : data.component_views;
-        const hasMore = groupBy === "all" && data.component_views.length > 5;
+        const hasMore = groupBy === "all" && data.component_views.length > 6;
         // Show controls only for the first component
         const showControls = index === 0;
 
@@ -456,7 +456,7 @@ export const ComponentsView: React.FC<ComponentsViewProps> = ({
                     <ViewMoreButton onClick={() => onToggleExpanded(id)}>
                       View More{" "}
                       <Badge status="neutral">
-                        {data.component_views.length - 5}
+                        {data.component_views.length - 6}
                       </Badge>{" "}
                       more
                     </ViewMoreButton>

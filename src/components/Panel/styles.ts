@@ -263,7 +263,7 @@ export const XPathContainer = styled.div({
   display: "flex",
   alignItems: "center",
   justifyContent: "space-between",
-  marginTop: "0.75rem",
+  marginTop: "6px",
   gap: "0.5rem",
 });
 
@@ -671,7 +671,7 @@ export const CodePreviewPre = styled.pre<{ className?: string }>(
     fontSize: "11px",
     fontFamily: "monospace",
     "&.collapsed": {
-      height: "28px",
+      height: "34px",
       overflow: "hidden",
       cursor: "pointer",
       position: "relative",
@@ -743,8 +743,8 @@ export const CodePreviewCode = styled.code(({ theme }) => ({
 
 export const ExpandCollapseButton = styled.button(({ theme }) => ({
   position: "absolute",
-  top: "8px",
-  right: "8px",
+  top: "5px",
+  right: "5px",
   backgroundColor: "transparent",
   borderRadius: "4px",
   width: "24px",
