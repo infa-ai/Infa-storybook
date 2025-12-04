@@ -16,7 +16,7 @@ jobs:
           fetch-depth: 0  # Fetch all history for proper versioning
 
       - name: Prepare repository
-        run: git fetch --unshallow --tags
+        run: git fetch --tags || true
 
       - name: Setup Node.js 20.x
         uses: actions/setup-node@v4
