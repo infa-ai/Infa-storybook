@@ -51,19 +51,19 @@ export const CodePreview: React.FC<CodePreviewProps> = ({
     // Highlight HTML tags
     escapedHtml = escapedHtml.replace(
       /(?<=&lt;)(\/?\w+)/g,
-      (match) => `<span class="html-tag">${match}</span>`
+      (match) => `<span class="html-tag">${match}</span>`,
     );
 
     // Highlight HTML attributes
     escapedHtml = escapedHtml.replace(
       /\b[\w-]+(?==&quot;)/g,
-      (match) => `<span class="html-attribute">${match}</span>`
+      (match) => `<span class="html-attribute">${match}</span>`,
     );
 
     // Highlight HTML values
     escapedHtml = escapedHtml.replace(
       /&quot;(.*?)&quot;/g,
-      (match, p1) => `"<span class="html-value">${p1}</span>"`
+      (match, p1) => `"<span class="html-value">${p1}</span>"`,
     );
 
     return escapedHtml;
@@ -164,5 +164,3 @@ export const CodePreview: React.FC<CodePreviewProps> = ({
     </CodePreviewWrapper>
   );
 };
-
-

@@ -21,12 +21,13 @@ console.log("🔍 Checking for pages data in usage-data.json\n");
 
 try {
   const data = JSON.parse(fs.readFileSync(DATA_FILE, "utf8"));
-  
+
   // Check for top-level pages array/object
   const hasTopLevelPages = data.pages !== undefined;
   const hasPagesArray = Array.isArray(data.pages);
-  const hasPagesObject = typeof data.pages === "object" && !Array.isArray(data.pages);
-  
+  const hasPagesObject =
+    typeof data.pages === "object" && !Array.isArray(data.pages);
+
   console.log("📊 Top-level structure:");
   console.log(`   - Has 'pages' key: ${hasTopLevelPages}`);
   if (hasTopLevelPages) {
@@ -39,17 +40,17 @@ try {
     }
   }
   console.log("");
-  
+
   // Check component_views for page_id values
   let totalViews = 0;
   let viewsWithPageId = 0;
   let uniquePageIds = new Set();
   const pageIdStats = {};
-  
+
   // Check all components
   Object.keys(data).forEach((key) => {
     if (key === "_metadata") return;
-    
+
     const component = data[key];
     if (component.component_views && Array.isArray(component.component_views)) {
       component.component_views.forEach((view) => {
@@ -71,14 +72,14 @@ try {
       });
     }
   });
-  
+
   console.log("📄 Component Views Analysis:");
   console.log(`   - Total component views: ${totalViews}`);
   console.log(`   - Views with page_id: ${viewsWithPageId}`);
   console.log(`   - Views without page_id: ${totalViews - viewsWithPageId}`);
   console.log(`   - Unique page_ids: ${uniquePageIds.size}`);
   console.log("");
-  
+
   if (uniquePageIds.size > 0) {
     console.log("✅ Found page_ids! Details:");
     Object.entries(pageIdStats).forEach(([pageId, stats]) => {
@@ -90,16 +91,16 @@ try {
   } else {
     console.log("❌ No page_ids found in component_views (all are null)");
   }
-  
+
   console.log("");
-  
+
   // Check for page objects with title/URL
   const allUrls = new Set();
   const urlToViews = {};
-  
+
   Object.keys(data).forEach((key) => {
     if (key === "_metadata") return;
-    
+
     const component = data[key];
     if (component.component_views && Array.isArray(component.component_views)) {
       component.component_views.forEach((view) => {
@@ -117,26 +118,31 @@ try {
       });
     }
   });
-  
+
   console.log("🌐 URL Analysis (for 'Group by Pages' feature):");
   console.log(`   - Unique URLs: ${allUrls.size}`);
   if (allUrls.size > 0) {
     console.log(`   - Sample URLs:`);
-    Array.from(allUrls).slice(0, 5).forEach((url) => {
-      console.log(`     • ${url} (${urlToViews[url].length} view(s))`);
-    });
+    Array.from(allUrls)
+      .slice(0, 5)
+      .forEach((url) => {
+        console.log(`     • ${url} (${urlToViews[url].length} view(s))`);
+      });
   }
   console.log("");
-  
+
   // Summary
   console.log("📋 Summary:");
-  console.log(`   ${hasTopLevelPages ? "✅" : "❌"} Top-level pages data: ${hasTopLevelPages ? "YES" : "NO"}`);
-  console.log(`   ${viewsWithPageId > 0 ? "✅" : "❌"} Component views with page_id: ${viewsWithPageId > 0 ? "YES" : "NO"} (${viewsWithPageId}/${totalViews})`);
-  console.log(`   ✅ URLs available for grouping: YES (${allUrls.size} unique URLs)`);
-  
+  console.log(
+    `   ${hasTopLevelPages ? "✅" : "❌"} Top-level pages data: ${hasTopLevelPages ? "YES" : "NO"}`,
+  );
+  console.log(
+    `   ${viewsWithPageId > 0 ? "✅" : "❌"} Component views with page_id: ${viewsWithPageId > 0 ? "YES" : "NO"} (${viewsWithPageId}/${totalViews})`,
+  );
+  console.log(
+    `   ✅ URLs available for grouping: YES (${allUrls.size} unique URLs)`,
+  );
 } catch (error) {
   console.error("❌ Error reading/parsing data file:", error.message);
   process.exit(1);
 }
-
-
