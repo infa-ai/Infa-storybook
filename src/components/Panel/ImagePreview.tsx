@@ -117,9 +117,9 @@ const ImagePreview: React.FC<ImagePreviewProps> = ({
   // Define the sources for different display scenarios
   // For single image preview, prioritize server -> local -> placeholder
   const singleDisplaySource = hasServerImages
-    ? serverImageSources[0].url
+    ? serverImageSources[0]?.url
     : hasLocalImages
-      ? localImageSources[0].url
+      ? localImageSources[0]?.url
       : placeholderImagePreview;
 
   // For multi-section display, prioritize server -> local
@@ -383,7 +383,7 @@ const ImagePreview: React.FC<ImagePreviewProps> = ({
     }
 
     // For single preview, load the first local image
-    const localImageUrl = localImageSources[0].url;
+    const localImageUrl = localImageSources[0]?.url;
     if (!localImageUrl) return;
 
     const img = new Image();
@@ -418,7 +418,7 @@ const ImagePreview: React.FC<ImagePreviewProps> = ({
     }
 
     // For single preview, load the first server image
-    const serverImageUrl = serverImageSources[0].url;
+    const serverImageUrl = serverImageSources[0]?.url;
     if (!serverImageUrl) return;
 
     const img = new Image();
@@ -905,7 +905,7 @@ const ImagePreview: React.FC<ImagePreviewProps> = ({
                     }}
                   >
                     <img
-                      src={localImageSources[0].url}
+                      src={localImageSources[0]?.url || ""}
                       alt="Local preview"
                       onClick={onImageClick}
                       style={{
@@ -1049,7 +1049,7 @@ const ImagePreview: React.FC<ImagePreviewProps> = ({
                     }}
                   >
                     <img
-                      src={serverImageSources[0].url}
+                      src={serverImageSources[0]?.url || ""}
                       alt="Server image"
                       ref={imageRef}
                       onClick={onImageClick}

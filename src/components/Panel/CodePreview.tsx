@@ -10,9 +10,6 @@ import {
   CodePreviewPre,
   CodePreviewCode,
   ExpandCollapseButton,
-  HtmlTag,
-  HtmlAttribute,
-  HtmlValue,
 } from "./styles";
 
 interface HTMLCode {
