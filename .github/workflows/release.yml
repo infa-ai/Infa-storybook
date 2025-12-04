@@ -54,6 +54,11 @@ jobs:
       - name: Run prepublish checks
         run: npm run prepublish-checks || echo "Prepublish checks completed"
 
+      - name: Configure npm authentication
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" >> ~/.npmrc
+          npm whoami
+
       - name: Create Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
