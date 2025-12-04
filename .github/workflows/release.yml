@@ -3,7 +3,7 @@ name: Release
 on:
   push:
     branches:
-      - main  # Only run releases from main branch
+      - main # Only run releases from main branch
 
 jobs:
   release:
@@ -13,7 +13,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Fetch all history for proper versioning
+          fetch-depth: 0 # Fetch all history for proper versioning
 
       - name: Prepare repository
         run: git fetch --tags || true
@@ -22,8 +22,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20.x
-          cache: 'npm'
-          registry-url: 'https://registry.npmjs.org'
+          cache: "npm"
+          registry-url: "https://registry.npmjs.org"
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
@@ -67,4 +67,3 @@ jobs:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           npm run release
-
