@@ -62,8 +62,8 @@
     "react-syntax-highlighter": "^16.0.0"
   },
   "devDependencies": {
-    "@storybook/addon-docs": "^10.0.0",
-    "@storybook/react-vite": "^10.0.0",
+    "@storybook/addon-docs": "^10.1.0",
+    "@storybook/react-vite": "^10.1.0",
     "@types/node": "^22",
     "@types/react": "^18.2.65",
     "@types/react-dom": "^18.2.21",
@@ -76,7 +76,7 @@
     "prompts": "^2.4.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "storybook": "^10.0.0",
+    "storybook": "^10.1.0",
     "ts-dedent": "^2.2.0",
     "tsup": "^8.2.4",
     "typescript": "^5.8.2",
@@ -84,7 +84,7 @@
     "zx": "^8.4.1"
   },
   "peerDependencies": {
-    "storybook": "^10.0.0"
+    "storybook": "^10.1.0"
   },
   "overrides": {
     "@octokit/request-error": "^5.1.1",
