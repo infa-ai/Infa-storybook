@@ -1,6 +1,6 @@
 {
   "name": "storybook-infa-usage",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Usage tab This tab connects Storybook documentation with live product usage, references, and deviations",
   "keywords": [
     "component",
