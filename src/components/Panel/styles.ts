@@ -96,12 +96,47 @@ export const ComponentHeaderWrapper = styled.div(({ theme }) => ({
   borderBottom: `1px solid ${theme.color.border}`,
 }));
 
+export const ComponentTitleRow = styled.div({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "space-between",
+  marginBottom: "0.5rem",
+});
+
 export const ComponentTitle = styled.h3(({ theme }) => ({
   margin: 0,
   fontSize: "16px",
   fontWeight: 600,
   color: theme.color.defaultText,
-  marginBottom: "0.5rem",
+  flex: 1,
+}));
+
+export const CollapseButton = styled.button(({ theme }) => ({
+  background: "none",
+  border: "none",
+  padding: "0.25rem",
+  cursor: "pointer",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  color: theme.color.mediumdark,
+  borderRadius: "4px",
+  transition: "all 0.2s ease",
+  width: "24px",
+  height: "24px",
+  flexShrink: 0,
+  "&:hover": {
+    background: theme.background.hoverable,
+    color: theme.color.defaultText,
+  },
+  "&:focus-visible": {
+    outline: `2px solid ${theme.color.secondary}`,
+    outlineOffset: "2px",
+  },
+  "& svg": {
+    width: "16px",
+    height: "16px",
+  },
 }));
 
 export const ComponentDescription = styled.p(({ theme }) => ({
@@ -157,11 +192,27 @@ export const Label = styled.span<{ bgColor?: string }>(({ theme, bgColor }) => (
   color: "#fff",
 }));
 
-export const SectionTitle = styled.h4(({ theme }) => ({
+export const SectionTitleRow = styled.div({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "space-between",
   margin: "1.5rem 0 0.75rem 0",
+});
+
+export const ControlsGroup = styled.div({
+  display: "flex",
+  alignItems: "center",
+  gap: "0.5rem",
+});
+
+export const SectionTitle = styled.h4(({ theme }) => ({
+  margin: 0,
   fontSize: "14px",
   fontWeight: 600,
   color: theme.color.defaultText,
+  display: "flex",
+  alignItems: "center",
+  gap: "0.5rem",
 }));
 
 export const ComponentViewsGrid = styled.div({
@@ -189,9 +240,16 @@ export const ComponentViewsGrid = styled.div({
 });
 
 export const ComponentViewCardWrapper = styled.div(({ theme }) => ({
-  padding: "1rem",
+  padding: 0,
   background: theme.background.bar,
-  borderRadius: "6px",
+  borderRadius: "4px",
+}));
+
+export const PageUrl = styled.div(({ theme }) => ({
+  fontSize: "12px",
+  color: theme.color.mediumdark,
+  fontFamily: "monospace",
+  fontWeight: 500,
 }));
 
 export const ViewCardTitle = styled.h5(({ theme }) => ({
@@ -199,7 +257,50 @@ export const ViewCardTitle = styled.h5(({ theme }) => ({
   fontSize: "13px",
   fontWeight: 600,
   color: theme.color.defaultText,
-  marginBottom: "0.25rem",
+}));
+
+export const XPathContainer = styled.div({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "space-between",
+  marginTop: "0.75rem",
+  gap: "0.5rem",
+});
+
+export const XPathText = styled.span(({ theme }) => ({
+  fontSize: "11px",
+  fontFamily: "monospace",
+  color: theme.color.mediumdark,
+  flex: 1,
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+  whiteSpace: "nowrap",
+}));
+
+export const XPathArrowButton = styled.a(({ theme }) => ({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  color: "#fff",
+  textDecoration: "none",
+  flexShrink: 0,
+  padding: "0.5rem",
+  borderRadius: "4px",
+  background: theme.color.secondary,
+  transition: "all 0.2s ease",
+  minWidth: "32px",
+  minHeight: "32px",
+  "&:hover": {
+    background: theme.color.darker,
+    transform: "scale(1.05)",
+  },
+  "&:active": {
+    transform: "scale(0.95)",
+  },
+  "& svg": {
+    width: "16px",
+    height: "16px",
+  },
 }));
 
 export const Screenshot = styled.img(({ theme }) => ({
@@ -291,13 +392,6 @@ export const PageSection = styled.div(({ theme }) => ({
   borderLeft: `2px solid ${theme.color.border}`,
 }));
 
-export const PageUrl = styled.div(({ theme }) => ({
-  fontSize: "12px",
-  color: theme.color.mediumdark,
-  marginBottom: "0.75rem",
-  fontFamily: "monospace",
-  fontWeight: 500,
-}));
 
 export const EmptyStateWrapper = styled.div(({ theme }) => ({
   textAlign: "center",
@@ -341,7 +435,52 @@ export const DocsLink = styled.a(({ theme }) => ({
 export const FooterWrapper = styled.div(({ theme }) => ({
   marginTop: "2rem",
   paddingTop: "1rem",
-  textAlign: "center",
+  textAlign: "left",
+}));
+
+export const SyncStatusContainer = styled.div({
+  marginBottom: "1rem",
+  display: "flex",
+  flexDirection: "row",
+  alignItems: "center",
+  gap: "16px",
+});
+
+export const SyncStatusText = styled.p(({ theme }) => ({
+  margin: 0,
+  fontSize: "13px",
+  color: theme.color.mediumdark,
+}));
+
+export const SyncButton = styled.button(({ theme }) => ({
+  padding: "0.5rem 1rem",
+  border: `1px solid ${theme.color.border}`,
+  background: "transparent",
+  color: theme.color.defaultText,
+  borderRadius: "4px",
+  fontSize: "13px",
+  fontWeight: 500,
+  cursor: "pointer",
+  transition: "all 0.2s ease",
+  display: "inline-flex",
+  alignItems: "center",
+  outline: "none",
+  "&:hover": {
+    background: theme.background.hoverable,
+    borderColor: theme.color.secondary,
+  },
+  "&:focus-visible": {
+    outline: `2px solid ${theme.color.secondary}`,
+    outlineOffset: "2px",
+  },
+}));
+
+export const FooterTip = styled.p(({ theme }) => ({
+  margin: 0,
+  marginBottom: "1rem",
+  fontSize: "13px",
+  color: theme.color.mediumdark,
+  lineHeight: 1.5,
 }));
 
 export const FooterText = styled.p(({ theme }) => ({
@@ -502,3 +641,263 @@ export const ModalLink = styled.a(({ theme }) => ({
     textDecoration: "underline",
   },
 }));
+
+// CodePreview styles - adapted from original CodePreview.scss
+export const CodePreviewWrapper = styled.div(({ theme }) => ({
+  position: "relative",
+  width: "100%",
+  "&:hover button": {
+    opacity: 1,
+    backgroundColor: theme.background.hoverable,
+  },
+}));
+
+export const CodePreviewPre = styled.pre<{ className?: string }>(
+  ({ theme }) => ({
+    backgroundColor: theme.background.app,
+    padding: "0.5rem 1rem 0.5rem",
+    borderRadius: "4px",
+    whiteSpace: "pre-wrap",
+    overflowWrap: "break-word",
+    wordBreak: "break-all",
+    maxWidth: "100%",
+    width: "100%",
+    boxSizing: "border-box",
+    overflowX: "auto",
+    overflowY: "auto",
+    position: "relative",
+    maxHeight: "360px",
+    margin: 0,
+    fontSize: "11px",
+    fontFamily: "monospace",
+    "&.collapsed": {
+      height: "28px",
+      overflow: "hidden",
+      cursor: "pointer",
+      position: "relative",
+      backgroundColor: theme.background.app,
+      "&::after": {
+        content: '""',
+        position: "absolute",
+        bottom: 0,
+        left: 0,
+        width: "100%",
+        height: "16px",
+        background: `linear-gradient(to bottom, transparent, ${theme.background.app})`,
+        pointerEvents: "none",
+        opacity: 1,
+        transition: "opacity 0.2s",
+      },
+      "&:hover": {
+        backgroundColor: theme.background.app,
+        transition: "background-color 0.2s",
+        "&::after": {
+          opacity: 0,
+          transition: "opacity 0.2s",
+        },
+      },
+    },
+  })
+);
+
+export const CodePreviewCode = styled.code(({ theme }) => ({
+  color: theme.color.defaultText,
+  display: "block",
+  width: "100%",
+  boxSizing: "border-box",
+  overflowWrap: "break-word",
+  wordBreak: "break-all",
+  whiteSpace: "pre-wrap",
+  fontSize: "11px",
+  fontFamily: "monospace",
+  "& .html-tag": {
+    color: theme.base === "light" ? "#24a148" : "#42be65", // success color
+  },
+  "& .html-attribute": {
+    color: theme.base === "light" ? "#f1c21b" : "#f1c21b", // warning color
+  },
+  "& .html-value": {
+    color: theme.color.secondary,
+  },
+  "& .code-navigation-button": {
+    display: "inline-flex",
+    position: "relative",
+    padding: "4px 4px !important",
+    alignItems: "center",
+    gap: "4px",
+    borderRadius: "4px",
+    backgroundColor: theme.background.bar,
+    border: `1px solid ${theme.color.border}`,
+    verticalAlign: "middle",
+    cursor: "pointer",
+    marginTop: "-2px",
+    "&:hover": {
+      backgroundColor: theme.background.hoverable,
+      borderColor: theme.color.secondary,
+      "& path": {
+        fill: theme.color.defaultText,
+      },
+    },
+  },
+}));
+
+export const ExpandCollapseButton = styled.button(({ theme }) => ({
+  position: "absolute",
+  top: "8px",
+  right: "8px",
+  backgroundColor: "transparent",
+  borderRadius: "4px",
+  width: "24px",
+  height: "24px",
+  padding: "4px",
+  opacity: 0.7,
+  transition: "opacity 0.15s, background-color 0.2s",
+  cursor: "pointer",
+  zIndex: 20,
+  border: "none",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  color: theme.color.defaultText,
+  "&:hover": {
+    opacity: 1,
+    backgroundColor: theme.background.hoverable,
+  },
+  "& svg": {
+    transformOrigin: "center",
+    transition: "transform 0.2s",
+    width: "16px",
+    height: "16px",
+  },
+  "&.expanded svg": {
+    transform: "rotate(180deg)",
+  },
+}));
+
+// GroupBy dropdown styles
+export const GroupByDropdown = styled.div({
+  position: "relative",
+});
+
+export const GroupByButton = styled.button(({ theme }) => ({
+  display: "inline-flex",
+  alignItems: "center",
+  gap: "0.375rem",
+  padding: "0.375rem 0.75rem",
+  fontSize: "12px",
+  fontWeight: 500,
+  border: `1px solid ${theme.color.border}`,
+  background: "transparent",
+  color: theme.color.defaultText,
+  borderRadius: "4px",
+  cursor: "pointer",
+  transition: "all 0.2s ease",
+  "&:hover": {
+    background: theme.background.hoverable,
+    borderColor: theme.color.secondary,
+  },
+  "&:focus-visible": {
+    outline: `2px solid ${theme.color.secondary}`,
+    outlineOffset: "2px",
+  },
+  "& svg": {
+    transition: "transform 0.2s ease",
+  },
+}));
+
+export const GroupByMenu = styled.div(({ theme }) => ({
+  position: "absolute",
+  top: "calc(100% + 4px)",
+  right: 0,
+  minWidth: "180px",
+  background: theme.background.content,
+  border: `1px solid ${theme.color.border}`,
+  borderRadius: "4px",
+  boxShadow: theme.base === "light"
+    ? "0 4px 12px rgba(0, 0, 0, 0.1)"
+    : "0 4px 12px rgba(0, 0, 0, 0.3)",
+  zIndex: 1000,
+  overflow: "hidden",
+}));
+
+export const GroupByMenuItem = styled.button<{ active?: boolean }>(
+  ({ theme, active }) => ({
+    display: "block",
+    width: "100%",
+    padding: "0.5rem 0.75rem",
+    fontSize: "12px",
+    textAlign: "left",
+    background: active ? theme.background.hoverable : "transparent",
+    color: active ? theme.color.defaultText : theme.color.mediumdark,
+    border: "none",
+    cursor: "pointer",
+    transition: "all 0.2s ease",
+    "&:hover": {
+      background: theme.background.hoverable,
+      color: theme.color.defaultText,
+    },
+    "&:first-child": {
+      borderTopLeftRadius: "4px",
+      borderTopRightRadius: "4px",
+    },
+    "&:last-child": {
+      borderBottomLeftRadius: "4px",
+      borderBottomRightRadius: "4px",
+    },
+  })
+);
+
+// Group header styles for domain/page grouping
+export const GroupHeader = styled.div(({ theme }) => ({
+  display: "flex",
+  alignItems: "center",
+  gap: "0.5rem",
+  padding: "0.75rem 1rem",
+  background: theme.background.bar,
+  borderRadius: "4px",
+  marginBottom: "0.5rem",
+  border: `1px solid ${theme.color.border}`,
+}));
+
+export const GroupHeaderButton = styled.button(({ theme }) => ({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  background: "none",
+  border: "none",
+  padding: "0.25rem",
+  cursor: "pointer",
+  color: theme.color.mediumdark,
+  borderRadius: "4px",
+  transition: "all 0.2s ease",
+  width: "20px",
+  height: "20px",
+  flexShrink: 0,
+  "&:hover": {
+    background: theme.background.hoverable,
+    color: theme.color.defaultText,
+  },
+  "&:focus-visible": {
+    outline: `2px solid ${theme.color.secondary}`,
+    outlineOffset: "2px",
+  },
+  "& svg": {
+    width: "12px",
+    height: "12px",
+  },
+}));
+
+export const GroupHeaderTitle = styled.span<{ isPage?: boolean }>(
+  ({ theme, isPage }) => ({
+    flex: 1,
+    fontSize: "13px",
+    fontWeight: 600,
+    color: theme.color.defaultText,
+    fontFamily: isPage ? "monospace" : "inherit",
+  })
+);
+
+export const GroupContent = styled.div({
+  marginTop: "0.5rem",
+});
+

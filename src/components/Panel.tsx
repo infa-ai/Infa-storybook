@@ -1,8 +1,8 @@
 /**
  * Panel component - Main entry point for the usage panel addon
- * 
+ *
  * This component orchestrates the display of component usage data,
- * providing two view modes: grouped by components or grouped by domains.
+ * grouped by components.
  */
 
 import React, { memo, useState } from "react";
@@ -11,9 +11,7 @@ import { useParameter } from "storybook/manager-api";
 import type { UsageParameters, UsageDataMap, ComponentData } from "../types";
 
 // Sub-components
-import { ViewToggle, type ViewMode } from "./Panel/ViewToggle";
 import { ComponentsView } from "./Panel/ComponentsView";
-import { DomainsView } from "./Panel/DomainsView";
 import { EmptyState } from "./Panel/EmptyState";
 import { Footer } from "./Panel/Footer";
 import { SyncModal } from "./Panel/SyncModal";
@@ -27,28 +25,41 @@ interface PanelProps {
 
 // Import usage data with fallback to empty object
 let usageData: UsageDataMap = {};
+let lastSyncedAt: string | undefined;
 try {
-  usageData = require("../data/usage-data.json");
+  const data = require("../data/usage-data.json");
+  // Extract metadata if it exists
+  if (data._metadata?.lastSyncedAt) {
+    lastSyncedAt = data._metadata.lastSyncedAt;
+    // Remove metadata from usageData
+    const { _metadata, ...rest } = data;
+    usageData = rest;
+  } else {
+    usageData = data;
+  }
 } catch (e) {
   console.warn("Usage data not found. Using empty data set.");
 }
 
 /**
  * Panel component that displays component usage data
- * 
+ *
  * Features:
- * - Toggle between "Components" and "Domains" view modes
  * - Expand/collapse component views
  * - Display screenshots, code snippets, and external links
  * - Empty state with setup instructions
  */
 export const Panel: React.FC<PanelProps> = memo(function UsagePanel(props) {
   // State management
-  const [viewMode, setViewMode] = useState<ViewMode>("components");
   const [expandedComponents, setExpandedComponents] = useState<
     Record<string, boolean>
   >({});
   const [isSyncModalOpen, setIsSyncModalOpen] = useState(false);
+
+  // Initialize all components as open (not collapsed) by default
+  const [collapsedComponents, setCollapsedComponents] = useState<
+    Record<string, boolean>
+  >({});
 
   // Get mcComponentIds from story parameters
   const params = useParameter<UsageParameters>("usage", { mcComponentIds: [] });
@@ -74,33 +85,46 @@ export const Panel: React.FC<PanelProps> = memo(function UsagePanel(props) {
     }));
   };
 
+  // Handler for toggling collapsed state of a component
+  const toggleCollapsed = (componentId: string) => {
+    setCollapsedComponents((prev) => ({
+      ...prev,
+      [componentId]: !prev[componentId],
+    }));
+  };
+
+  // Handler for opening Infa board to tag components
+  const handleTagComponents = () => {
+    if (boardId) {
+      window.open(
+        `https://infa.ai/open?board=${boardId}`,
+        "_blank",
+        "noopener,noreferrer",
+      );
+    }
+  };
+
   return (
     <AddonPanel {...props}>
       <PanelContent>
         {hasComponents && components.length > 0 ? (
-          <>
-            <ViewToggle
-              viewMode={viewMode}
-              onViewModeChange={setViewMode}
-              boardId={boardId}
-              onSyncClick={() => setIsSyncModalOpen(true)}
-            />
-
-            {viewMode === "components" ? (
-              <ComponentsView
-                components={components}
-                expandedComponents={expandedComponents}
-                onToggleExpanded={toggleExpanded}
-              />
-            ) : (
-              <DomainsView components={components} />
-            )}
-          </>
+          <ComponentsView
+            components={components}
+            expandedComponents={expandedComponents}
+            onToggleExpanded={toggleExpanded}
+            collapsedComponents={collapsedComponents}
+            onToggleCollapsed={toggleCollapsed}
+            boardId={boardId}
+            onTagComponents={handleTagComponents}
+          />
         ) : (
           <EmptyState />
         )}
-        <Footer />
-        
+        <Footer
+          lastSyncedAt={lastSyncedAt}
+          onSyncClick={() => setIsSyncModalOpen(true)}
+        />
+
         <SyncModal
           isOpen={isSyncModalOpen}
           onClose={() => setIsSyncModalOpen(false)}

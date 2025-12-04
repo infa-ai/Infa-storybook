@@ -523,6 +523,16 @@ npm install
 npm run storybook
 ```
 
+### Development Mode with Auto-Rebuild
+
+For development with automatic rebuilding when you make changes to the addon:
+
+```bash
+npm run start
+```
+
+This runs both the addon build in watch mode and Storybook in parallel. Changes to addon source files will automatically rebuild and reload in Storybook.
+
 ### Building the Addon
 
 ```bash

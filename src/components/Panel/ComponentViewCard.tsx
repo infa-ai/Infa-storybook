@@ -3,16 +3,19 @@
  */
 
 import React from "react";
-import { SyntaxHighlighter } from "storybook/internal/components";
+import { ArrowRightIcon } from "@storybook/icons";
 import type { ComponentView } from "../../types";
 import {
   ComponentViewCardWrapper,
   ViewCardTitle,
-  UrlDisplay,
-  ViewInPageButton,
+  PageUrl,
+  XPathContainer,
+  XPathText,
+  XPathArrowButton,
 } from "./styles";
 import { extractInfaIds, generateInfaLink, formatUrlForDisplay } from "./utils";
 import ImagePreview from "./ImagePreview";
+import { CodePreview } from "./CodePreview";
 
 interface ComponentViewCardProps {
   view: ComponentView;
@@ -34,48 +37,58 @@ export const ComponentViewCard: React.FC<ComponentViewCardProps> = ({
 
   return (
     <ComponentViewCardWrapper>
-      <ViewCardTitle>{view.title}</ViewCardTitle>
-
       {view.screenshot && (
-        <ImagePreview
-          serverImageSources={[{ url: view.screenshot }]}
-          type="component"
-          mode="preview"
-        />
-      )}
-
-      {view.code && (
-        <div style={{ marginTop: "0.75rem", marginBottom: "0.75rem" }}>
-          <SyntaxHighlighter
-            language="html"
-            copyable={true}
-            bordered={true}
-            padded={true}
-          >
-            {view.code}
-          </SyntaxHighlighter>
+        <div style={{ margin: "6px", width: "calc(100% - 12px)" }}>
+          <ImagePreview
+            serverImageSources={[{ url: view.screenshot }]}
+            type="component"
+            mode="preview"
+          />
         </div>
       )}
 
-      <div style={{ marginBottom: "0.75rem" }}>
-        <span style={{ fontSize: "11px", color: "#999" }}>Found at: </span>
-        <UrlDisplay
-          href={view.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          title={view.url}
-        >
-          {formatUrlForDisplay(view.url)}
-        </UrlDisplay>
+      <div
+        style={{
+          padding: "12px 16px 0px 16px",
+          display: "flex",
+          flexDirection: "column",
+          gap: "2px",
+        }}
+      >
+        <PageUrl>{formatUrlForDisplay(view.url)}</PageUrl>
+        <ViewCardTitle>{view.title}</ViewCardTitle>
       </div>
 
-      <ViewInPageButton
-        href={infaLink}
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        View in Page
-      </ViewInPageButton>
+      {view.code && (
+        <div style={{ margin: "12px 6px 2px", width: "calc(100% - 12px)" }}>
+          <CodePreview
+            htmlCode={{ selected: view.code }}
+            defaultCollapsed={true}
+          />
+        </div>
+      )}
+
+      {view.x_path && (
+        <div
+          style={{
+            paddingLeft: "16px",
+            paddingRight: "16px",
+            paddingBottom: "12px",
+          }}
+        >
+          <XPathContainer>
+            <XPathText>{view.x_path}</XPathText>
+            <XPathArrowButton
+              href={infaLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              title="View in Page"
+            >
+              <ArrowRightIcon />
+            </XPathArrowButton>
+          </XPathContainer>
+        </div>
+      )}
     </ComponentViewCardWrapper>
   );
 };

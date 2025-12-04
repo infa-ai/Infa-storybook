@@ -3,6 +3,7 @@
  */
 
 import React, { useState } from "react";
+import { ChevronDownIcon, ChevronRightIcon } from "@storybook/icons";
 import type { ComponentData } from "../../types";
 import {
   ComponentHeaderWrapper,
@@ -14,6 +15,8 @@ import {
   ExternalLink,
   ExternalLinkIcon,
   ViewMoreTextButton,
+  ComponentTitleRow,
+  CollapseButton,
 } from "./styles";
 
 interface ComponentHeaderProps {
@@ -21,6 +24,8 @@ interface ComponentHeaderProps {
   description: string | null;
   labels: ComponentData["labels"];
   externalLinks: ComponentData["external_links"];
+  isCollapsed?: boolean;
+  onToggleCollapsed?: () => void;
 }
 
 const MAX_DESCRIPTION_LENGTH = 200;
@@ -30,6 +35,8 @@ export const ComponentHeader: React.FC<ComponentHeaderProps> = ({
   description,
   labels,
   externalLinks,
+  isCollapsed = false,
+  onToggleCollapsed,
 }) => {
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
 
@@ -41,7 +48,22 @@ export const ComponentHeader: React.FC<ComponentHeaderProps> = ({
 
   return (
     <ComponentHeaderWrapper>
-      <ComponentTitle>{title}</ComponentTitle>
+      <ComponentTitleRow>
+        <ComponentTitle>{title}</ComponentTitle>
+        {onToggleCollapsed && (
+          <CollapseButton
+            onClick={onToggleCollapsed}
+            aria-label={isCollapsed ? "Expand component" : "Collapse component"}
+            title={isCollapsed ? "Expand component" : "Collapse component"}
+          >
+            {isCollapsed ? (
+              <ChevronRightIcon />
+            ) : (
+              <ChevronDownIcon />
+            )}
+          </CollapseButton>
+        )}
+      </ComponentTitleRow>
 
       {labels && labels.length > 0 && (
         <LabelsContainer>

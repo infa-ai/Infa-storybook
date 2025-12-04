@@ -150,8 +150,16 @@ function writeDataFile(data) {
     fs.mkdirSync(dir, { recursive: true });
   }
 
+  // Add metadata with sync timestamp
+  const outputData = {
+    ...data,
+    _metadata: {
+      lastSyncedAt: new Date().toISOString(),
+    },
+  };
+
   // Write formatted JSON
-  fs.writeFileSync(OUTPUT_FILE, JSON.stringify(data, null, 2) + "\n", "utf8");
+  fs.writeFileSync(OUTPUT_FILE, JSON.stringify(outputData, null, 2) + "\n", "utf8");
 
   console.log(
     `✅ Wrote usage data to ${path.relative(process.cwd(), OUTPUT_FILE)}`,
