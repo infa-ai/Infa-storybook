@@ -76,6 +76,92 @@
         "is_domain_specific": false
       }
     ],
-    "board_id": "b_29btSDq0"
+    "board_id": "b_29btSDq0",
+    "pages": [
+      {
+        "title": "React",
+        "page_id": "p_RvXzhrDT",
+        "is_dynamic": false,
+        "screenshot": null,
+        "default_url": "https://github.com/primer/react",
+        "url_pattern": "https://github.com/primer/react",
+        "component_view_count": 0
+      },
+      {
+        "title": "Branches",
+        "page_id": "p_b8J6Amau",
+        "is_dynamic": false,
+        "screenshot": null,
+        "default_url": "https://github.com/primer/react/branches",
+        "url_pattern": "https://github.com/primer/react/branches",
+        "component_view_count": 0
+      },
+      {
+        "title": "4536",
+        "page_id": "p_djqYwrL1",
+        "is_dynamic": false,
+        "screenshot": null,
+        "default_url": "https://github.com/primer/react/pull/4536",
+        "url_pattern": "https://github.com/primer/react/pull/4536",
+        "component_view_count": 0
+      },
+      {
+        "title": "Search",
+        "page_id": "p_Pr0Bxl0e",
+        "is_dynamic": false,
+        "screenshot": null,
+        "default_url": "https://github.com/search?q=primer&type=repositories",
+        "url_pattern": "https://github.com/search?q=primer&type=repositories",
+        "component_view_count": 0
+      },
+      {
+        "title": "New",
+        "page_id": "p_qyXZIyBp",
+        "is_dynamic": false,
+        "screenshot": "https://lchwovxxbgcdycaqmftj.supabase.co/storage/v1/object/public/public_screenshots/b_29btSDq0/screenshot-p_qyXZIyBp-251203172739-0@2x.png",
+        "default_url": "https://github.com/new",
+        "url_pattern": "https://github.com/new",
+        "component_view_count": 0
+      },
+      {
+        "title": "Docs",
+        "page_id": "p_cJMSnuQn",
+        "is_dynamic": false,
+        "screenshot": null,
+        "default_url": "https://github.com/primer/react/tree/main/docs",
+        "url_pattern": "https://github.com/primer/react/tree/main/docs",
+        "component_view_count": 0
+      },
+      {
+        "title": "Github  Home",
+        "page_id": "p_ySF2d2T0",
+        "is_dynamic": false,
+        "screenshot": "https://lchwovxxbgcdycaqmftj.supabase.co/storage/v1/object/public/public_screenshots/b_29btSDq0/screenshot-p_ySF2d2T0-251203172751-0@2x.png",
+        "default_url": "https://github.com/",
+        "url_pattern": "https://github.com/",
+        "component_view_count": 0
+      },
+      {
+        "title": "Issues",
+        "page_id": "p_GE7rNe1i",
+        "is_dynamic": false,
+        "screenshot": null,
+        "default_url": "https://github.com/issues",
+        "url_pattern": "https://github.com/issues",
+        "component_view_count": 0
+      },
+      {
+        "title": "Marketplace",
+        "page_id": "p_e1xQGIfl",
+        "is_dynamic": false,
+        "screenshot": null,
+        "default_url": "https://github.com/marketplace",
+        "url_pattern": "https://github.com/marketplace",
+        "component_view_count": 0
+      }
+    ]
+  },
+  "_metadata": {
+    "lastSyncedAt": "2025-12-04T01:30:58.077Z"
   }
 }

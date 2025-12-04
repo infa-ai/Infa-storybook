@@ -852,11 +852,7 @@ export const GroupHeader = styled.div(({ theme }) => ({
   display: "flex",
   alignItems: "center",
   gap: "0.5rem",
-  padding: "0.75rem 1rem",
-  background: theme.background.bar,
-  borderRadius: "4px",
   marginBottom: "0.5rem",
-  border: `1px solid ${theme.color.border}`,
 }));
 
 export const GroupHeaderButton = styled.button(({ theme }) => ({
@@ -894,10 +890,53 @@ export const GroupHeaderTitle = styled.span<{ isPage?: boolean }>(
     fontWeight: 600,
     color: theme.color.defaultText,
     fontFamily: isPage ? "monospace" : "inherit",
+    display: "flex",
+    alignItems: "center",
+    gap: "0.5rem",
   })
 );
 
 export const GroupContent = styled.div({
   marginTop: "0.5rem",
 });
+
+export const PageInfoContainer = styled.div(({ theme }) => ({
+  display: "flex",
+  gap: "1rem",
+  marginBottom: "1rem",
+  padding: "0.75rem",
+  background: theme.base === "light"
+    ? "rgba(0, 0, 0, 0.02)"
+    : "rgba(255, 255, 255, 0.02)",
+  borderRadius: "6px",
+}));
+
+export const PageInfoImage = styled.img({
+  width: "128px",
+  height: "auto",
+  borderRadius: "4px",
+  objectFit: "cover",
+  flexShrink: 0,
+});
+
+export const PageInfoContent = styled.div({
+  flex: 1,
+  display: "flex",
+  flexDirection: "column",
+  gap: "0.5rem",
+});
+
+export const PageInfoLabel = styled.div(({ theme }) => ({
+  fontSize: "11px",
+  fontWeight: 600,
+  color: theme.color.mediumdark,
+  marginBottom: "0.25rem",
+}));
+
+export const PageInfoUrl = styled.div(({ theme }) => ({
+  fontSize: "12px",
+  fontFamily: "monospace",
+  color: theme.color.defaultText,
+  wordBreak: "break-all",
+}));
 

@@ -2,7 +2,7 @@
  * Utility functions for Panel component
  */
 
-import type { ComponentData, ComponentView } from "../../types";
+import type { ComponentData, ComponentView, Page } from "../../types";
 
 /**
  * Extracts domain from a URL
@@ -84,5 +84,39 @@ export const generateInfaLink = (
   });
 
   return infaLink;
+};
+
+/**
+ * Matches a component view URL to a page based on url_pattern
+ * Returns the matching page or null
+ */
+export const matchUrlToPage = (
+  url: string,
+  pages: Page[] | undefined,
+): Page | null => {
+  if (!pages || pages.length === 0) return null;
+
+  // Try exact match first
+  const exactMatch = pages.find((page) => page.url_pattern === url);
+  if (exactMatch) return exactMatch;
+
+  // Try matching with default_url
+  const defaultMatch = pages.find(
+    (page) => page.default_url === url || page.default_url === url.replace(/\/$/, '')
+  );
+  if (defaultMatch) return defaultMatch;
+
+  // Try pattern matching (simple startsWith for now)
+  // For dynamic pages, url_pattern might be a pattern like "https://github.com/primer/react/*"
+  const patternMatch = pages.find((page) => {
+    if (page.is_dynamic && page.url_pattern) {
+      const pattern = page.url_pattern.replace(/\*/g, '');
+      return url.startsWith(pattern);
+    }
+    return false;
+  });
+  if (patternMatch) return patternMatch;
+
+  return null;
 };
 

@@ -25,6 +25,16 @@ export interface ComponentView {
   id?: string; // Component view ID for Infa deep links
 }
 
+export interface Page {
+  page_id: string;
+  title: string;
+  url_pattern: string;
+  default_url: string | null;
+  is_dynamic: boolean;
+  screenshot: string | null;
+  component_view_count: number | null;
+}
+
 export interface ComponentData {
   title: string;
   description: string | null;
@@ -33,6 +43,7 @@ export interface ComponentData {
   labels: Label[];
   component_views: ComponentView[];
   board_id?: string; // Board ID for Infa deep links
+  pages?: Page[]; // Pages for the board this component belongs to
 }
 
 export type UsageDataMap = Record<string, ComponentData>;

@@ -108,12 +108,60 @@ async function fetchComponentData(componentIds) {
     });
 
     if (!response.ok) {
+      const errorText = await response.text();
+      console.error(`API Error Response: ${errorText}`);
       throw new Error(
         `API request failed: ${response.status} ${response.statusText}`,
       );
     }
 
     const data = await response.json();
+
+    // Debug: Log API response structure to check for pages
+    console.log("\n🔍 API Response Structure:");
+    console.log(
+      `   - Response type: ${Array.isArray(data) ? "Array" : typeof data}`,
+    );
+    if (Array.isArray(data) && data.length > 0) {
+      console.log(`   - First item keys: ${Object.keys(data[0]).join(", ")}`);
+      if (data[0].pages !== undefined) {
+        console.log(`   ✅ Found 'pages' in API response!`);
+        console.log(
+          `   - Pages type: ${Array.isArray(data[0].pages) ? "Array" : typeof data[0].pages}`,
+        );
+        if (Array.isArray(data[0].pages)) {
+          console.log(`   - Pages count: ${data[0].pages.length}`);
+        }
+      }
+    } else if (typeof data === "object" && !Array.isArray(data)) {
+      console.log(`   - Top-level keys: ${Object.keys(data).join(", ")}`);
+      if (data.pages !== undefined) {
+        console.log(`   ✅ Found 'pages' in API response!`);
+        console.log(
+          `   - Pages type: ${Array.isArray(data.pages) ? "Array" : typeof data.pages}`,
+        );
+      }
+    }
+
+    // Check for page_id in component_views
+    if (Array.isArray(data) && data.length > 0) {
+      const sampleComponent = data[0];
+      if (
+        sampleComponent.component_views &&
+        Array.isArray(sampleComponent.component_views)
+      ) {
+        const viewsWithPageId = sampleComponent.component_views.filter(
+          (v) => v.page_id !== null && v.page_id !== undefined,
+        );
+        console.log(
+          `   - Component views with page_id: ${viewsWithPageId.length}/${sampleComponent.component_views.length}`,
+        );
+        if (viewsWithPageId.length > 0) {
+          console.log(`   ✅ Found page_ids in component_views!`);
+        }
+      }
+    }
+    console.log("");
 
     // Convert array response to object keyed by component ID
     const result = {};
@@ -126,6 +174,7 @@ async function fetchComponentData(componentIds) {
         labels: item.labels || [],
         component_views: item.component_views || [],
         board_id: item.board_id || null,
+        pages: item.pages || [], // Pages for the board
       };
     });
 
@@ -159,7 +208,11 @@ function writeDataFile(data) {
   };
 
   // Write formatted JSON
-  fs.writeFileSync(OUTPUT_FILE, JSON.stringify(outputData, null, 2) + "\n", "utf8");
+  fs.writeFileSync(
+    OUTPUT_FILE,
+    JSON.stringify(outputData, null, 2) + "\n",
+    "utf8",
+  );
 
   console.log(
     `✅ Wrote usage data to ${path.relative(process.cwd(), OUTPUT_FILE)}`,

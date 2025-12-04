@@ -8,7 +8,7 @@ import { Badge } from "storybook/internal/components";
 import type { ComponentData, ComponentView } from "../../types";
 import { ComponentHeader } from "./ComponentHeader";
 import { ComponentViewCard } from "./ComponentViewCard";
-import { extractDomain, formatUrlForDisplay } from "./utils";
+import { extractDomain, formatUrlForDisplay, matchUrlToPage } from "./utils";
 import {
   ComponentSection,
   SectionTitle,
@@ -25,6 +25,11 @@ import {
   GroupHeaderButton,
   GroupHeaderTitle,
   GroupContent,
+  PageInfoContainer,
+  PageInfoImage,
+  PageInfoContent,
+  PageInfoLabel,
+  PageInfoUrl,
 } from "./styles";
 
 type GroupByOption = "all" | "domains" | "pages";
@@ -86,6 +91,51 @@ export const ComponentsView: React.FC<ComponentsViewProps> = ({
     setCollapsedGroups({});
   };
 
+  // Check if grouping options should be available
+  const checkGroupingAvailability = useMemo(() => {
+    // Collect all views from all components
+    const allViews = components.flatMap(
+      ({ data }) => data.component_views || [],
+    );
+
+    if (allViews.length === 0) {
+      return { domains: false, pages: false };
+    }
+
+    // Check domains - normalize to handle edge cases
+    const domains = new Set(
+      allViews.map((view) => {
+        try {
+          const domain = extractDomain(view.url);
+          return domain.toLowerCase().trim();
+        } catch {
+          return view.url;
+        }
+      }),
+    );
+    const hasMultipleDomains = domains.size > 1;
+
+    // Check pages (URLs)
+    const urls = new Set(allViews.map((view) => view.url));
+    const hasMultiplePages = urls.size > 1;
+
+    return {
+      domains: hasMultipleDomains,
+      pages: hasMultiplePages,
+    };
+  }, [components]);
+
+  // Reset groupBy if selected option is no longer available
+  useEffect(() => {
+    if (groupBy === "domains" && !checkGroupingAvailability.domains) {
+      setGroupBy("all");
+      setCollapsedGroups({});
+    } else if (groupBy === "pages" && !checkGroupingAvailability.pages) {
+      setGroupBy("all");
+      setCollapsedGroups({});
+    }
+  }, [groupBy, checkGroupingAvailability]);
+
   const toggleGroupCollapsed = (groupId: string) => {
     setCollapsedGroups((prev) => ({
       ...prev,
@@ -93,25 +143,36 @@ export const ComponentsView: React.FC<ComponentsViewProps> = ({
     }));
   };
 
-  // Group views by domain or URL
+  // Group views by domain or page
   const groupViews = (
     views: ComponentView[],
     groupType: "domains" | "pages",
-  ): Map<string, ComponentView[]> => {
-    const grouped = new Map<string, ComponentView[]>();
+    pages?: Array<{ id: string; data: ComponentData }>[0]["data"]["pages"],
+  ): Map<string, { views: ComponentView[]; page: any }> => {
+    const grouped = new Map<string, { views: ComponentView[]; page: any }>();
 
     views.forEach((view) => {
       let key: string;
+      let page: any = null;
+
       if (groupType === "domains") {
         key = extractDomain(view.url);
       } else {
-        key = view.url;
+        // Try to match URL to a page
+        const matchedPage = matchUrlToPage(view.url, pages);
+        if (matchedPage) {
+          key = matchedPage.page_id;
+          page = matchedPage;
+        } else {
+          // Fallback to URL if no page match
+          key = view.url;
+        }
       }
 
       if (!grouped.has(key)) {
-        grouped.set(key, []);
+        grouped.set(key, { views: [], page });
       }
-      grouped.get(key)!.push(view);
+      grouped.get(key)!.views.push(view);
     });
 
     return grouped;
@@ -136,10 +197,14 @@ export const ComponentsView: React.FC<ComponentsViewProps> = ({
       {components.map(({ id, data }, index) => {
         const isExpanded = expandedComponents[id];
         const isCollapsed = collapsedComponents[id];
-        const visibleViews = isExpanded
-          ? data.component_views
-          : data.component_views.slice(0, 5);
-        const hasMore = data.component_views.length > 5;
+        // When grouping is active, show all views; otherwise use pagination
+        const visibleViews =
+          groupBy === "all"
+            ? isExpanded
+              ? data.component_views
+              : data.component_views.slice(0, 5)
+            : data.component_views;
+        const hasMore = groupBy === "all" && data.component_views.length > 5;
         // Show controls only for the first component
         const showControls = index === 0;
 
@@ -212,18 +277,22 @@ export const ComponentsView: React.FC<ComponentsViewProps> = ({
                               >
                                 All Views
                               </GroupByMenuItem>
-                              <GroupByMenuItem
-                                active={groupBy === "domains"}
-                                onClick={() => handleGroupBySelect("domains")}
-                              >
-                                Group by Domains
-                              </GroupByMenuItem>
-                              <GroupByMenuItem
-                                active={groupBy === "pages"}
-                                onClick={() => handleGroupBySelect("pages")}
-                              >
-                                Group by Pages
-                              </GroupByMenuItem>
+                              {checkGroupingAvailability.domains && (
+                                <GroupByMenuItem
+                                  active={groupBy === "domains"}
+                                  onClick={() => handleGroupBySelect("domains")}
+                                >
+                                  Group by Domains
+                                </GroupByMenuItem>
+                              )}
+                              {checkGroupingAvailability.pages && (
+                                <GroupByMenuItem
+                                  active={groupBy === "pages"}
+                                  onClick={() => handleGroupBySelect("pages")}
+                                >
+                                  Group by Pages
+                                </GroupByMenuItem>
+                              )}
                             </GroupByMenu>
                           )}
                         </GroupByDropdown>
@@ -263,15 +332,26 @@ export const ComponentsView: React.FC<ComponentsViewProps> = ({
                         );
                       }
 
-                      const grouped = groupViews(data.component_views, groupBy);
+                      const grouped = groupViews(
+                        data.component_views,
+                        groupBy,
+                        data.pages,
+                      );
                       const groups = Array.from(grouped.entries());
 
                       return (
                         <>
-                          {groups.map(([groupKey, groupViews]) => {
+                          {groups.map(([groupKey, groupData]) => {
                             const groupId = `${id}-${groupBy}-${groupKey}`;
                             const isGroupCollapsed =
                               collapsedGroups[groupId] ?? false;
+                            const page = groupData.page;
+                            const displayTitle =
+                              groupBy === "pages" && page
+                                ? page.title
+                                : groupBy === "domains"
+                                  ? groupKey
+                                  : formatUrlForDisplay(groupKey);
 
                             return (
                               <div key={groupId} style={{ marginTop: "1rem" }}>
@@ -305,18 +385,55 @@ export const ComponentsView: React.FC<ComponentsViewProps> = ({
                                   <GroupHeaderTitle
                                     isPage={groupBy === "pages"}
                                   >
-                                    {groupBy === "domains"
-                                      ? groupKey
-                                      : formatUrlForDisplay(groupKey)}
+                                    {displayTitle}{" "}
+                                    <Badge status="neutral">
+                                      {groupData.views.length}
+                                    </Badge>
                                   </GroupHeaderTitle>
-                                  <Badge status="neutral">
-                                    {groupViews.length}
-                                  </Badge>
                                 </GroupHeader>
                                 {!isGroupCollapsed && (
                                   <GroupContent>
+                                    {groupBy === "pages" && page && (
+                                      <PageInfoContainer>
+                                        {page.screenshot && (
+                                          <PageInfoImage
+                                            src={page.screenshot}
+                                            alt={page.title}
+                                          />
+                                        )}
+                                        <PageInfoContent>
+                                          {page.url_pattern ===
+                                          page.default_url ? (
+                                            <PageInfoUrl>
+                                              {page.url_pattern}
+                                            </PageInfoUrl>
+                                          ) : (
+                                            <>
+                                              <div>
+                                                <PageInfoLabel>
+                                                  URL Pattern
+                                                </PageInfoLabel>
+                                                <PageInfoUrl>
+                                                  {page.url_pattern}
+                                                </PageInfoUrl>
+                                              </div>
+                                              {page.default_url && (
+                                                <div>
+                                                  <PageInfoLabel>
+                                                    Default URL
+                                                  </PageInfoLabel>
+                                                  <PageInfoUrl>
+                                                    {page.default_url}
+                                                  </PageInfoUrl>
+                                                </div>
+                                              )}
+                                            </>
+                                          )}
+                                        </PageInfoContent>
+                                      </PageInfoContainer>
+                                    )}
                                     <ComponentViewsGrid>
-                                      {groupViews.map((view, idx) => (
+                                      {groupData.views.map((view, idx) => (
                                         <ComponentViewCard
                                           key={`${groupId}-${idx}`}
                                           view={view}
@@ -334,7 +451,8 @@ export const ComponentsView: React.FC<ComponentsViewProps> = ({
                     })()
                   )}
 
-                  {hasMore && !isExpanded && (
+                  {/* Only show View More/Less when not grouping */}
+                  {groupBy === "all" && hasMore && !isExpanded && (
                     <ViewMoreButton onClick={() => onToggleExpanded(id)}>
                       View More{" "}
                       <Badge status="neutral">
@@ -344,7 +462,7 @@ export const ComponentsView: React.FC<ComponentsViewProps> = ({
                     </ViewMoreButton>
                   )}
 
-                  {hasMore && isExpanded && (
+                  {groupBy === "all" && hasMore && isExpanded && (
                     <ViewMoreButton onClick={() => onToggleExpanded(id)}>
                       View Less
                     </ViewMoreButton>
