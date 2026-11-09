@@ -10,7 +10,7 @@ import { ADDON_ID, PANEL_ID } from "./constants";
  */
 
 // Register the addon
-addons.register(ADDON_ID, (api) => {
+addons.register(ADDON_ID, () => {
   // Register a panel
   addons.add(PANEL_ID, {
     type: types.PANEL,

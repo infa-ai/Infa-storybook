@@ -45,9 +45,9 @@
   "scripts": {
     "build": "tsup",
     "build:watch": "npm run build -- --watch",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "eslint . --ext .ts,.tsx,.js,.jsx --max-warnings 0",
-    "lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",
+    "test": "vitest run",
+    "lint": "eslint . --max-warnings 0",
+    "lint:fix": "eslint . --fix",
     "type-check": "tsc --noEmit",
     "start": "run-p build:watch \"storybook --quiet\"",
     "prerelease": "zx scripts/prepublish-checks.js",
@@ -56,7 +56,8 @@
     "eject-ts": "zx scripts/eject-typescript.js",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "fetch-usage-data": "node scripts/infa-integration.js"
+    "fetch-usage-data": "node scripts/infa-integration.js",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@storybook/icons": "^1.4.0",
@@ -64,6 +65,7 @@
     "react-syntax-highlighter": "^16.0.0"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@storybook/addon-docs": "^10.1.4",
     "@storybook/react-vite": "^10.1.4",
     "@types/node": "^22",
@@ -73,6 +75,9 @@
     "auto": "^11.3.0",
     "boxen": "^7.1.1",
     "dotenv": "^17.2.3",
+    "eslint": "^10.14.0",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "globals": "^17.0.0",
     "npm-run-all2": "^6.2.3",
     "prettier": "^3.3.3",
     "prompts": "^2.4.2",
@@ -82,7 +87,9 @@
     "ts-dedent": "^2.2.0",
     "tsup": "^8.2.4",
     "typescript": "^5.8.2",
+    "typescript-eslint": "^8.72.2",
     "vite": "^7.1.12",
+    "vitest": "^3.2.7",
     "zx": "^8.4.1"
   },
   "peerDependencies": {

@@ -1,7 +1,10 @@
 #!/usr/bin/env node
 
 /**
- * infa-usage-fetch — writes the Usage panel's data from Infa.
+ * infa-usage-fetch — writes the Usage panel's data from Infa with a Personal
+ * Access Token. The Infa CLI does the same signed in as you, for team boards
+ * too and with no ids in your stories: `npx infa storybook sync`. This stays
+ * for setups that already use a token.
  *
  * Run it from your project's root (locally or in CI):
  *
@@ -228,7 +231,7 @@ async function main() {
   const missing = ids.filter((id) => !result[id]);
   if (missing.length > 0) {
     console.warn(
-      `⚠️  Not returned: ${missing.join(", ")}. The key reads components on boards its own account owns; check the id and which account made the token.`,
+      `⚠️  Not returned: ${missing.join(", ")}. The key reads components on boards its own account owns; check the id and which account made the token, or sync as yourself (team boards too) with \`npx infa storybook sync\`.`,
     );
   }
 
