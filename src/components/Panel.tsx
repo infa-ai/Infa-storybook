@@ -9,6 +9,7 @@ import React, { memo, useState } from "react";
 import { AddonPanel } from "storybook/internal/components";
 import { useParameter } from "storybook/manager-api";
 import type { UsageParameters, UsageDataMap, ComponentData } from "../types";
+import { DATA_GLOBAL } from "../constants";
 
 // Sub-components
 import { ComponentsView } from "./Panel/ComponentsView";
@@ -23,22 +24,23 @@ interface PanelProps {
   active: boolean;
 }
 
-// Import usage data with fallback to empty object
+// The project's usage data, put into the manager page by the preset
+// (src/preset.ts) from the file `infa-usage-fetch` wrote. It used to be
+// imported from this package's own src/data, which bundled the addon's demo
+// data into the published build: a project never saw its own components.
 let usageData: UsageDataMap = {};
 let lastSyncedAt: string | undefined;
-try {
-  const data = require("../data/usage-data.json");
-  // Extract metadata if it exists
-  if (data._metadata?.lastSyncedAt) {
-    lastSyncedAt = data._metadata.lastSyncedAt;
-    // Remove metadata from usageData
-    const { _metadata, ...rest } = data;
-    usageData = rest;
-  } else {
-    usageData = data;
-  }
-} catch (e) {
-  console.warn("Usage data not found. Using empty data set.");
+const injected = (globalThis as Record<string, unknown>)[DATA_GLOBAL];
+if (injected && typeof injected === "object") {
+  const { _metadata, ...rest } = injected as UsageDataMap & {
+    _metadata?: { lastSyncedAt?: string };
+  };
+  lastSyncedAt = _metadata?.lastSyncedAt;
+  usageData = rest as UsageDataMap;
+} else {
+  console.warn(
+    "[storybook-infa-usage] No usage data. Run `npx infa-usage-fetch`, then restart Storybook.",
+  );
 }
 
 /**

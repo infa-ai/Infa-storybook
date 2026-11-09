@@ -43,15 +43,15 @@ export const SyncModal: React.FC<SyncModalProps> = ({ isOpen, onClose }) => {
           <ModalSection>
             <h4>Step 2: Run the Fetch Script</h4>
             <p>Execute the following command to pull the latest data from Infa:</p>
-            <ModalCode>npm run fetch-usage-data</ModalCode>
+            <ModalCode>npx infa-usage-fetch</ModalCode>
             <p style={{ fontSize: "12px", marginTop: "0.5rem", opacity: 0.8 }}>
               This will update <code>src/data/usage-data.json</code> with fresh component data.
             </p>
           </ModalSection>
 
           <ModalSection>
-            <h4>Step 3: Rebuild Storybook</h4>
-            <p>Rebuild your Storybook to see the updated data:</p>
+            <h4>Step 3: Restart Storybook</h4>
+            <p>Storybook reads the data when it starts, so restart (or rebuild) it:</p>
             <ModalCode>npm run storybook</ModalCode>
             <p style={{ fontSize: "12px", marginTop: "0.5rem", opacity: 0.8 }}>
               The Usage panel will immediately show all newly tagged components.

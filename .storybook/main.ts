@@ -7,7 +7,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const config = defineMain({
   stories: ["../src/**/*.mdx", "../src/**/*.stories.@(js|jsx|ts|tsx)"],
-  addons: ["@storybook/addon-docs", "./local-preset.cjs"],
+  addons: ["@storybook/addon-docs", "./local-preset.mjs"],
   framework: "@storybook/react-vite",
   viteFinal: async (config, options) => {
     // Watch dist folder for changes during development
