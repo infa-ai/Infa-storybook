@@ -68,7 +68,7 @@ A Storybook addon that runs in the browser:
 
 To use this addon, you'll need:
 
-- **Infa Pro Account** - The Infa API requires a Pro subscription (only $20/month)
+- **An Infa account with components tagged on a board you own**, and a Personal Access Token (step 3 below)
 - **Get started at**: [infa.ai](https://infa.ai)
 
 **Good news:** Once you've tagged your components and added deep links, they'll continue to work even after subscription deactivation. You'll still be able to see where and how components are used in your products.
@@ -160,62 +160,68 @@ export const Secondary: StoryObj<typeof Button> = {
 };
 ```
 
-### 3. Set Up Data Fetching
+### 3. Get your Infa API key
 
-The data fetching script is included in the package. Set it up to run during your build:
+The key is a **Personal Access Token** from your Infa profile:
 
-1. **Copy the integration script** to your project (example provided in the package):
+1. Open [infa.ai/profile?tab=integrations](https://infa.ai/profile?tab=integrations) (avatar → **Profile** → **Integrations**).
+2. Under **Personal Access Tokens**, click **Generate New Token**.
+3. Click the token's **copy** button. The table shows only the first four characters (`abcd****`); copying that text gives a key Infa does not recognise.
 
-```bash
-mkdir -p scripts
-cp node_modules/storybook-infa-usage/scripts/infa-integration.js scripts/
-```
-
-> **Note:** You can customize this script for your specific needs. It's designed to be modified!
-
-2. **Install required dependencies:**
+Set it as `INFA_API_KEY`, in your shell, your CI secrets, or a `.env` file in your project root:
 
 ```bash
-npm install --save-dev glob dotenv
+export INFA_API_KEY="<your 64-character token>"
 ```
 
-3. **Set your Infa API key:**
+### 4. Fetch the usage data
+
+Run the bundled command from your project root:
 
 ```bash
-export INFA_API_KEY="your-api-key-here"
+npx infa-usage-fetch
 ```
 
-Or create a `.env` file:
+It finds every `mcComponentIds` in your `*.stories.*` files, asks Infa for those components, and writes `src/data/usage-data.json`. Options: `--stories <dir>` (where to look, default: the current directory), `--out <file>` (default `src/data/usage-data.json`), `--ids mc_a,mc_b` (skip the scan). It needs no extra dependencies (Node 18.17 or later).
 
-```
-INFA_API_KEY=your-api-key-here
-```
-
-4. **Add script to package.json:**
+To run it as an npm script:
 
 ```json
 {
   "scripts": {
-    "fetch-usage-data": "node scripts/infa-integration.js"
+    "fetch-usage-data": "infa-usage-fetch"
   }
 }
 ```
 
-5. **Run the script:**
+If you write the file somewhere else, tell the addon where:
 
-```bash
-npm run fetch-usage-data
+```typescript
+// .storybook/main.ts
+addons: [{ name: "storybook-infa-usage", options: { dataFile: "data/usage.json" } }],
 ```
 
-This generates `src/data/usage-data.json` with your component usage data.
-
-### 4. Run Storybook
+### 5. Run Storybook
 
 ```bash
 npm run storybook
 ```
 
-Open any story with configured `mcComponentIds` and check the **Usage** panel!
+Open any story with configured `mcComponentIds` and check the **Usage** panel. Storybook reads the data file when it starts, so restart it (or rebuild) after fetching.
+
+### Calling the API yourself
+
+The command calls one endpoint. To call it from your own code, send your token as the `x-api-key` header, plus the public `apikey` header every Infa API request carries (it is the same for everyone; copy it from [`scripts/infa-integration.js`](./scripts/infa-integration.js) or the [API docs](https://infa.ai/docs/integrations/api)):
+
+```bash
+curl -X POST https://api.infa.ai/rest/v1/rpc/get_storybook_main_components \
+  -H "apikey: <public key from the docs>" \
+  -H "x-api-key: $INFA_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"p_mc_component_ids": ["mc_abc12345"]}'
+```
+
+The other endpoints (`get_main_components`, `get_component_views`, `get_boards`, …) take the same two headers: see the [Infa External API docs](https://infa.ai/docs/integrations/api).
 
 ## Fetching Usage Data from Infa
 
@@ -225,7 +231,7 @@ The integration script runs at build time, giving you full control over your dat
 
 1. **Tag components in Infa** - Use the Infa browser extension or dashboard to tag components in your products
 2. **Configure your stories** - Add `mcComponentIds` to your story parameters
-3. **Run the fetch script** - Execute `npm run fetch-usage-data` to pull the latest data
+3. **Run the fetch command** - Execute `npx infa-usage-fetch` to pull the latest data
 4. **Rebuild Storybook** - The Usage panel immediately shows all tagged components
 
 This build-time approach means you can continuously tag new components in Infa and see them in Storybook with a simple rebuild—no code changes needed!
@@ -294,7 +300,7 @@ jobs:
       - name: Fetch usage data from Infa
         env:
           INFA_API_KEY: ${{ secrets.INFA_API_KEY }}
-        run: npm run fetch-usage-data
+        run: npx infa-usage-fetch
 
       - name: Build Storybook
         run: npm run build-storybook
@@ -567,29 +573,35 @@ parameters: {
 
 - Verify you've added the `usage` parameter to your story
 - Check that `mcComponentIds` is an array of strings
-- Ensure you've run `npm run fetch-usage-data` to generate the data file
-- Confirm `src/data/usage-data.json` exists and contains your component IDs
+- Ensure you've run `npx infa-usage-fetch` and restarted Storybook
+- Confirm `src/data/usage-data.json` exists and contains your component IDs (or set the addon's `dataFile` option)
 
 ### Component shows "Unknown Component"
 
 - The component ID exists in story parameters but not in `usage-data.json`
 - Check that the ID format is correct (e.g., `mc_abc12345`)
-- Run `npm run fetch-usage-data` to update the data file
+- Run `npx infa-usage-fetch` to update the data file
 - Verify your Infa API key has access to these components
 
 ### Data not updating
 
-- Make sure to rebuild Storybook after updating `usage-data.json`
+- Restart or rebuild Storybook after updating `usage-data.json`: the addon reads it when Storybook starts
 - Clear your browser cache if old data persists
 - Check the browser console for any errors
 - Verify the data file is being bundled correctly (check Network tab)
 
-### Fetch script fails
+### Fetch fails with "Invalid API key or API key not found"
 
-- Verify `INFA_API_KEY` environment variable is set
-- Check your API key has the correct permissions
-- Ensure you have network access to `api.infa.ai`
-- Review the console output for specific error messages
+Infa received a key it does not recognise:
+
+- Copy the token with its **copy** button on [infa.ai/profile?tab=integrations](https://infa.ai/profile?tab=integrations); the visible `abcd****` is a masked preview, not the key.
+- The key goes in the `x-api-key` header (`infa-usage-fetch` does this for you), not `Authorization: Bearer`.
+- No spaces or line breaks around it. `infa-usage-fetch` trims them; your own code should too.
+- A deleted token stops working at once; generate a new one.
+
+### Fetch says some components were "Not returned"
+
+The token reads components on boards **its own account owns**. Check the `mc_…` id and that the token was made by the board's owner.
 
 ### Empty Component Views
 
@@ -600,8 +612,8 @@ parameters: {
 
 ## Resources
 
-- [Infa Documentation](https://docs.infa.ai)
-- [Get Your Infa API Key](https://infa.ai/settings/api)
+- [Infa External API](https://infa.ai/docs/integrations/api)
+- [Get Your Infa API Key](https://infa.ai/profile?tab=integrations) (Profile → Integrations → Personal Access Tokens)
 - [Storybook Documentation](https://storybook.js.org)
 
 ## Contributing

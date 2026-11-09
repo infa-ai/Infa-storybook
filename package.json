@@ -32,13 +32,15 @@
       "import": "./dist/preview.js"
     },
     "./manager": "./dist/manager.js",
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./preset": "./dist/preset.js"
   },
   "files": [
     "dist/**/*",
+    "scripts/infa-integration.js",
     "README.md",
-    "*.js",
-    "*.d.ts"
+    "manager.js",
+    "preview.js"
   ],
   "scripts": {
     "build": "tsup",
@@ -105,6 +107,9 @@
     ],
     "previewEntries": [
       "src/preview.ts"
+    ],
+    "nodeEntries": [
+      "src/preset.ts"
     ]
   },
   "storybook": {
@@ -121,5 +126,8 @@
       "react-native"
     ],
     "icon": "https://user-images.githubusercontent.com/321738/63501763-88dbf600-c4cc-11e9-96cd-94adadc2fd72.png"
+  },
+  "bin": {
+    "infa-usage-fetch": "./scripts/infa-integration.js"
   }
 }
