@@ -151,6 +151,21 @@ export function explainApiError(status, body) {
   return [`The Infa API answered ${status}: ${message}`];
 }
 
+/**
+ * Which element a view is and how it was found, as the addon reads it
+ * (src/usageData.ts does the same for any file): an XPath means the browser
+ * (the Chrome extension), a repo path in `url` means code (the Infa CLI).
+ */
+export function viewSource(view) {
+  const xPath = typeof view.x_path === "string" ? view.x_path.trim() : "";
+  if (xPath) return { source: xPath, sourceKind: "browser" };
+  const url = typeof view.url === "string" ? view.url.trim() : "";
+  if (url && !/^[a-z][a-z0-9+.-]*:/i.test(url) && !url.startsWith("//")) {
+    return { source: url, sourceKind: "code" };
+  }
+  return { source: null, sourceKind: null };
+}
+
 /** One component from the API, in the shape the panel reads. */
 export function toComponentData(item) {
   const screens = Array.isArray(item.screens) ? item.screens : (item.pages ?? []);
@@ -160,14 +175,15 @@ export function toComponentData(item) {
     query: item.query ?? null,
     external_links: item.external_links ?? [],
     labels: item.labels ?? [],
-    component_views: (item.component_views ?? []).map((view) => ({
+    component_views: (item.component_views ?? []).map(({ page_id, screen_id, ...view }) => ({
       ...view,
-      page_id: view.page_id ?? view.screen_id ?? null,
+      screenId: screen_id ?? page_id ?? null,
+      ...viewSource(view),
     })),
     board_id: item.board_id ?? null,
-    pages: screens.map((screen) => ({
+    screens: screens.map(({ page_id, screen_id, ...screen }) => ({
       ...screen,
-      page_id: screen.page_id ?? screen.screen_id,
+      screenId: screen_id ?? page_id,
     })),
   };
 }

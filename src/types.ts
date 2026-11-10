@@ -15,14 +15,34 @@ export interface Label {
   color: string;
 }
 
+/**
+ * How a usage was found: in the browser by the Infa Chrome extension (its
+ * `source` is an XPath) or in code by the Infa CLI (its `source` is a
+ * repo-relative file path).
+ */
+export type UsageSourceKind = "browser" | "code";
+
+/**
+ * One usage of a component, as the panel reads it: a component view, with
+ * WHERE in the product it sits (`screenId`, a board screen) and WHICH element
+ * it is (`source`). Every data file is read into this shape by
+ * `normalizeUsageData` (src/usageData.ts), whatever wrote it.
+ */
 export interface ComponentView {
   title: string;
+  /** The page the view was captured on (browser), or its file (code). */
   url: string;
+  /** The XPath the extension captured; "" for a view found in code. */
   x_path: string;
   screenshot: string | null;
   code: string | null;
   is_domain_specific: boolean;
-  page_id: string | null;
+  /** The board screen the usage is on; null when it is on no screen yet. */
+  screenId: string | null;
+  /** Which element: an XPath (browser) or a repo-relative file path (code). */
+  source: string | null;
+  /** Read from `source`: an XPath is `browser`, anything else `code`. */
+  sourceKind: UsageSourceKind | null;
   id?: string; // Component view ID for Infa deep links
   /** The component's default view (`infa storybook sync`): shown first. */
   is_default?: boolean;
@@ -49,8 +69,9 @@ export interface UsageFlow {
   reasons?: string[];
 }
 
-export interface Page {
-  page_id: string;
+/** A board screen a component's usages sit on. */
+export interface Screen {
+  screenId: string;
   title: string;
   url_pattern: string;
   default_url: string | null;
@@ -67,7 +88,8 @@ export interface ComponentData {
   labels: Label[];
   component_views: ComponentView[];
   board_id?: string; // Board ID for Infa deep links
-  pages?: Page[]; // Pages for the board this component belongs to
+  /** The board screens this component's usages sit on. */
+  screens?: Screen[];
   main_component_id?: string;
   /** The component's page on the board (`infa storybook sync`). */
   board_url?: string;

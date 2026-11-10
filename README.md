@@ -8,7 +8,7 @@ A Storybook addon that connects your component documentation with real-world pro
 
 ## What it looks like
 
-**In Storybook:** the Usage tab of a story shows the component as your Infa board knows it: its label and description, the flows that use it, and each place it was captured on your product, with a screenshot, where it was, whether it is the default view, and whether it is still found there (**Verified**) or has drifted (**Stale**). **Open in Infa** goes to the component on the board.
+**In Storybook:** the Usage tab of a story shows the component as your Infa board knows it: its label and description, the flows that use it, and its **usages** — each place in your product where it is used, grouped by the screen it is on — with a screenshot, whether it was found in the **Browser** (the Chrome extension) or in **Code** (the Infa CLI), where exactly (the page, or the file), whether it is the default view, and whether it is still found there (**Verified**) or has drifted (**Stale**). **Open in Infa** goes to the component on the board.
 
 ![The Usage tab of a PromoChip story: the component's label and description, "Used in" two flows, and two captured views marked Default and Verified, and Stale](https://lchwovxxbgcdycaqmftj.supabase.co/storage/v1/object/public/screenshots/readme/01-storybook-usage-tab.png)
 
@@ -331,28 +331,32 @@ For each component a story documents, the Usage panel displays:
 - **ID**: Main component ID for reference
 - **Description**: Full component documentation (supports markdown and images)
 
-### 2. Component Views
+### 2. Usages
 
-Shows every instance where this component appears in your products:
+A usage is one place in your product where the component is used: a component view that sits on a board **screen**. Usages are found two ways, and the panel lists both in one list:
+
+- **Browser** — tagged on a live page with the Infa Chrome extension. Its source is the element's XPath.
+- **Code** — found in your repository by the Infa CLI (or the Claude plugin). Its source is the file, as a repo-relative path.
+
+The list is grouped by screen (the screen's name links to it on the board); usages not placed on a screen yet are grouped last under **Not on a screen yet**. The group menu also offers **Group by Domain** (when usages span several sites) and **All Usages** (one flat list).
 
 ```
-Component Views (6)
-  • Dashboard Primary Button
-    https://yourapp.com/dashboard
-    XPath: //*[@id="cta-button"]
-    Screenshot: [thumbnail]
-
-  • Login Submit Button
-    https://yourapp.com/login
-    XPath: //button[@type="submit"]
-    Screenshot: [thumbnail]
+Usages (7)                               Group by Screen ▾
+  Checkout  2
+    [BROWSER] app.yourcompany.com/checkout
+              //*[@id="pay-button"]              (the XPath, on a quieter line)
+    [CODE]    src/features/checkout/PayButton.tsx
+  Not on a screen yet  1
+    [BROWSER] app.yourcompany.com/settings
 ```
 
-Each view gives you:
+Each usage gives you:
 
-- Direct link to the product page
-- Technical location (XPath) for developers
-- Visual screenshot for context
+- Where it was found (**Browser** or **Code**) and its locator: the page for the browser (with the XPath underneath, full text on hover), the file for code
+- A screenshot, or the live render when the view has one
+- A link to the component on the board
+
+A component with no usages yet says so, with a link to the component on the board, where usages are added from the browser (Chrome extension) or from code (Infa CLI / Claude plugin).
 
 ### 3. Labels
 
@@ -413,7 +417,31 @@ The generated `src/data/usage-data.json` follows this structure:
         "screenshot": "https://cdn.infa.ai/screenshots/abc123.png",
         "code": null,
         "is_domain_specific": false,
-        "page_id": null
+        "screenId": "s_checkout",
+        "source": "//*[@id=\"main-cta\"]",
+        "sourceKind": "browser"
+      },
+      {
+        "title": "Checkout pay button",
+        "url": "src/features/checkout/PayButton.tsx",
+        "x_path": "",
+        "screenshot": null,
+        "code": null,
+        "is_domain_specific": false,
+        "screenId": "s_checkout",
+        "source": "src/features/checkout/PayButton.tsx",
+        "sourceKind": "code"
+      }
+    ],
+    "screens": [
+      {
+        "screenId": "s_checkout",
+        "title": "Checkout",
+        "url_pattern": "https://app.yourcompany.com/checkout",
+        "default_url": "https://app.yourcompany.com/checkout",
+        "is_dynamic": false,
+        "screenshot": null,
+        "component_view_count": 2
       }
     ]
   },
@@ -425,6 +453,8 @@ The generated `src/data/usage-data.json` follows this structure:
   }
 }
 ```
+
+Each view says where it is and which element it is: `screenId` (the board screen, or `null`), `source` (an XPath for a usage found in the browser, a repo-relative file path for one found in code) and `sourceKind` (`"browser"`, `"code"` or `null`). A file written before these fields still works: the panel reads `page_id` / `screen_id` as `screenId` and a component's `pages` as `screens`, and takes `source` from `x_path`, else from a `url` that is a file path rather than a page.
 
 `infa storybook sync` also writes each component's `board_url` and `flows`, and each view's `is_default`, `preview_html_url` and `health` (see the types below).
 
@@ -442,6 +472,7 @@ interface ComponentData {
   component_views: ComponentView[];
   // Written by `infa storybook sync`; absent otherwise
   main_component_id?: string;
+  screens?: Screen[]; // the board screens its usages sit on
   board_url?: string; // https://infa.ai/b/<board>/components/<mc_id>
   flows?: { id: string; name: string; url: string; reasons?: string[] }[];
 }
@@ -453,12 +484,24 @@ interface ComponentView {
   screenshot: string | null;
   code: string | null;
   is_domain_specific: boolean;
-  page_id: string | null;
+  screenId: string | null; // the board screen the usage is on
+  source: string | null; // an XPath (browser) or a repo-relative file path (code)
+  sourceKind: "browser" | "code" | null; // read from source: an XPath is "browser"
   id?: string;
   // Written by `infa storybook sync`; absent otherwise
   is_default?: boolean;
   preview_html_url?: string;
   health?: { state: "verified" | "recovered" | "stale" | "broken" | "removed"; checkedAt?: string; reason?: string };
+}
+
+interface Screen {
+  screenId: string;
+  title: string;
+  url_pattern: string;
+  default_url: string | null;
+  is_dynamic: boolean;
+  screenshot: string | null;
+  component_view_count: number | null;
 }
 
 // The file's `_metadata` (not a component)
@@ -526,7 +569,9 @@ async function fetchFromYourAPI() {
         screenshot: instance.screenshot,
         code: null,
         is_domain_specific: false,
-        page_id: null,
+        screenId: instance.screenId ?? null,
+        source: instance.xpath, // or a repo-relative file path for a usage found in code
+        sourceKind: "browser",
       })),
     };
   });

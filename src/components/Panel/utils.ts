@@ -2,7 +2,7 @@
  * Utility functions for Panel component
  */
 
-import type { ComponentView, Page, ViewHealthState } from "../../types";
+import type { ComponentView, Screen, UsageSourceKind, ViewHealthState } from "../../types";
 
 /**
  * Extracts domain from a URL
@@ -93,7 +93,8 @@ export const originOf = (url: string | null | undefined): string => {
 /**
  * Where a view's "open" arrow goes: the component's page on the board when
  * the ids are known (it lists every view, its health and flows), else the
- * page the view was captured on.
+ * page the view was captured on; "" for a usage found in code with no board
+ * to open (its `url` is a file, not a page).
  *
  * @param view - The view.
  * @param boardId - Its board, from the data or its screenshot's path.
@@ -105,7 +106,8 @@ export const generateInfaLink = (
   boardId: string | null,
   componentId: string | null,
   boardUrl?: string | null,
-): string => boardUrl || componentPageUrl(boardId, componentId) || view.url;
+): string =>
+  boardUrl || componentPageUrl(boardId, componentId) || (/^https?:\/\//i.test(view.url) ? view.url : "");
 
 /** The board's components index, for "Tag More Components". */
 export const boardComponentsUrl = (
@@ -162,37 +164,97 @@ export const HEALTH_COPY: Record<ViewHealthState, { label: string; tone: "positi
   removed: { label: "Removed", tone: "negative" },
 };
 
-/**
- * Matches a component view URL to a page based on url_pattern
- * Returns the matching page or null
- */
-export const matchUrlToPage = (
-  url: string,
-  pages: Page[] | undefined,
-): Page | null => {
-  if (!pages || pages.length === 0) return null;
-
-  // Try exact match first
-  const exactMatch = pages.find((page) => page.url_pattern === url);
-  if (exactMatch) return exactMatch;
-
-  // Try matching with default_url
-  const defaultMatch = pages.find(
-    (page) => page.default_url === url || page.default_url === url.replace(/\/$/, '')
-  );
-  if (defaultMatch) return defaultMatch;
-
-  // Try pattern matching (simple startsWith for now)
-  // For dynamic pages, url_pattern might be a pattern like "https://github.com/primer/react/*"
-  const patternMatch = pages.find((page) => {
-    if (page.is_dynamic && page.url_pattern) {
-      const pattern = page.url_pattern.replace(/\*/g, '');
-      return url.startsWith(pattern);
-    }
-    return false;
-  });
-  if (patternMatch) return patternMatch;
-
-  return null;
+/** How the panel names where a usage was found. */
+export const SOURCE_KIND_COPY: Record<UsageSourceKind, { label: string; title: string }> = {
+  browser: { label: "Browser", title: "Found in the browser with the Infa Chrome extension" },
+  code: { label: "Code", title: "Found in code with the Infa CLI" },
 };
 
+/**
+ * What a usage card says about where the usage is: for code, the file; for
+ * the browser, the page it was captured on, with the XPath as a second,
+ * quieter line.
+ */
+export const viewLocator = (view: ComponentView): { primary: string; secondary: string | null } => {
+  if (view.sourceKind === "code") return { primary: view.source ?? view.url, secondary: null };
+  const xPath = view.sourceKind === "browser" ? view.source : view.x_path || null;
+  const page = view.url ? formatUrlForDisplay(view.url) : "";
+  return page ? { primary: page, secondary: xPath } : { primary: xPath ?? "", secondary: null };
+};
+
+/** A screen's page on the board: `https://infa.ai/b/{board}/screens/{screen}`. */
+export const screenPageUrl = (
+  boardId: string | null | undefined,
+  screenId: string | null | undefined,
+  someBoardUrl?: string | null,
+): string | null =>
+  boardId && screenId
+    ? `${originOf(someBoardUrl)}/b/${encodeURIComponent(boardId)}/screens/${encodeURIComponent(screenId)}`
+    : null;
+
+/** The key of the group of usages that sit on no screen. */
+export const NO_SCREEN_KEY = "no-screen";
+export const NO_SCREEN_TITLE = "Not on a screen yet";
+
+/** A group of a component's usages: one screen (or none), or one domain. */
+export interface UsageGroup {
+  key: string;
+  title: string;
+  /** The screen, when the group is one and the data has it. */
+  screen: Screen | null;
+  screenId: string | null;
+  views: ComponentView[];
+}
+
+/**
+ * A component's usages grouped by the screen they sit on, screens in the
+ * order their first usage comes (the default view first), the usages on no
+ * screen last, under "Not on a screen yet". A screen the data does not
+ * describe is still a group, titled with its id.
+ *
+ * @param views - The component's views.
+ * @param screens - The screens the data describes.
+ */
+export const groupViewsByScreen = (views: ComponentView[], screens: Screen[] | undefined): UsageGroup[] => {
+  const byId = new Map((screens ?? []).map((s) => [s.screenId, s]));
+  const groups = new Map<string, UsageGroup>();
+  const unplaced: ComponentView[] = [];
+  for (const view of views) {
+    if (!view.screenId) {
+      unplaced.push(view);
+      continue;
+    }
+    let group = groups.get(view.screenId);
+    if (!group) {
+      const screen = byId.get(view.screenId) ?? null;
+      group = { key: view.screenId, title: screen?.title || view.screenId, screen, screenId: view.screenId, views: [] };
+      groups.set(view.screenId, group);
+    }
+    group.views.push(view);
+  }
+  const out = [...groups.values()];
+  if (unplaced.length > 0) {
+    out.push({ key: NO_SCREEN_KEY, title: NO_SCREEN_TITLE, screen: null, screenId: null, views: unplaced });
+  }
+  return out;
+};
+
+/**
+ * A component's usages grouped by the domain of the page they were captured
+ * on; usages found in code together under "Code".
+ *
+ * @param views - The component's views.
+ */
+export const groupViewsByDomain = (views: ComponentView[]): UsageGroup[] => {
+  const groups = new Map<string, UsageGroup>();
+  for (const view of views) {
+    const key = view.sourceKind === "code" ? "Code" : extractDomain(view.url) || "Unknown page";
+    let group = groups.get(key);
+    if (!group) {
+      group = { key, title: key, screen: null, screenId: null, views: [] };
+      groups.set(key, group);
+    }
+    group.views.push(view);
+  }
+  return [...groups.values()];
+};

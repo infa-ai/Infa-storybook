@@ -10,6 +10,7 @@ import { AddonPanel } from "storybook/internal/components";
 import { useParameter, useStorybookApi, useStorybookState } from "storybook/manager-api";
 import type { UsageParameters, UsageDataMap, ComponentData, UsageMetadata } from "../types";
 import { DATA_GLOBAL } from "../constants";
+import { normalizeUsageData } from "../usageData";
 
 // Sub-components
 import { ComponentsView } from "./Panel/ComponentsView";
@@ -29,15 +30,13 @@ interface PanelProps {
 // (src/preset.ts) from the file `infa-usage-fetch` wrote. It used to be
 // imported from this package's own src/data, which bundled the addon's demo
 // data into the published build: a project never saw its own components.
+// Every writer's file (the CLI's, older ones, the PAT script's) is read into
+// one shape: each view with its `screenId`, `source` and `sourceKind`.
 let usageData: UsageDataMap = {};
 let metadata: UsageMetadata = {};
 const injected = (globalThis as Record<string, unknown>)[DATA_GLOBAL];
 if (injected && typeof injected === "object") {
-  const { _metadata, ...rest } = injected as UsageDataMap & {
-    _metadata?: UsageMetadata;
-  };
-  metadata = _metadata ?? {};
-  usageData = rest as UsageDataMap;
+  ({ components: usageData, metadata } = normalizeUsageData(injected));
 } else {
   console.warn(
     "[storybook-infa-usage] No usage data. Run `npx infa storybook sync` (or `npx infa-usage-fetch`), then restart Storybook.",

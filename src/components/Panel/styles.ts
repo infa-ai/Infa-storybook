@@ -1014,3 +1014,69 @@ export const FlowListLabel = styled.span(({ theme }) => ({
   color: theme.textMutedColor,
   marginRight: "4px",
 }));
+
+// --- Usages: grouped by screen, each found in the browser or in code ---
+
+export const GroupHeaderLink = styled.a(({ theme }) => ({
+  color: "inherit",
+  textDecoration: "none",
+  "&:hover": {
+    color: theme.color.secondary,
+    textDecoration: "underline",
+  },
+}));
+
+/** "Browser" or "Code": where the usage was found. */
+export const SourceBadge = styled.span<{ kind: "browser" | "code" }>(({ theme, kind }) => ({
+  display: "inline-flex",
+  alignItems: "center",
+  flexShrink: 0,
+  padding: "0 6px",
+  borderRadius: "4px",
+  fontSize: "10px",
+  fontWeight: theme.typography.weight.bold,
+  lineHeight: "16px",
+  letterSpacing: "0.02em",
+  textTransform: "uppercase",
+  color: kind === "code" ? "#8a3ffc" : "#0f62fe",
+  background: kind === "code" ? "rgba(138, 63, 252, 0.12)" : "rgba(15, 98, 254, 0.12)",
+}));
+
+export const LocatorRow = styled.div({
+  display: "flex",
+  alignItems: "center",
+  gap: "6px",
+  minWidth: 0,
+});
+
+export const LocatorText = styled.span(({ theme }) => ({
+  fontSize: "12px",
+  color: theme.color.mediumdark,
+  fontFamily: "monospace",
+  fontWeight: 500,
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+  whiteSpace: "nowrap",
+  minWidth: 0,
+}));
+
+export const NoUsagesWrapper = styled.div(({ theme }) => ({
+  margin: "0.5rem 0 1rem",
+  padding: "1rem 1.25rem",
+  borderRadius: "6px",
+  background: theme.background.bar,
+  color: theme.color.mediumdark,
+}));
+
+export const NoUsagesTitle = styled.h4(({ theme }) => ({
+  margin: "0 0 0.25rem 0",
+  fontSize: "13px",
+  fontWeight: 600,
+  color: theme.color.defaultText,
+}));
+
+export const NoUsagesText = styled.p({
+  margin: "0.25rem 0",
+  fontSize: "13px",
+  lineHeight: 1.5,
+});

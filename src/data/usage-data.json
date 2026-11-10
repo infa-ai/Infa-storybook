@@ -21,8 +21,22 @@
         "code": "<button type=\"button\" class=\"prc-Button-ButtonBase-c50BI\" data-loading=\"false\" data-size=\"small\" data-variant=\"default\" aria-describedby=\":r1j:-loading-announcement\"><span data-component=\"buttonContent\" data-align=\"center\" class=\"prc-Button-ButtonContent-HKbr-\"><span data-component=\"leadingVisual\" class=\"prc-Button-Visual-2epfX prc-Button-VisualWrap-Db-eB\"><svg aria-hidden=\"true\" focusable=\"false\" class=\"octicon octicon-star\" viewBox=\"0 0 16 16\" width=\"16\" height=\"16\" fill=\"currentColor\" display=\"inline-block\" overflow=\"visible\" style=\"vertical-align: text-bottom;\">...</span><span data-component=\"text\" class=\"prc-Button-Label-pTQ3x\">Star</span></span></button>",
         "title": "Star Button",
         "x_path": "//body/div/div[6]/main/react-app/div/div/div/div/div/div[2]/div/div/div/div[4]/div/div/div/div/div[2]/div/button",
-        "page_id": null,
         "screenshot": "https://lchwovxxbgcdycaqmftj.supabase.co/storage/v1/object/public/public_screenshots/component_views/cv_uCnCnmR4-1761578734936.png",
+        "is_domain_specific": false,
+        "screenId": "p_Pr0Bxl0e",
+        "source": "//body/div/div[6]/main/react-app/div/div/div/div/div/div[2]/div/div/div/div[4]/div/div/div/div/div[2]/div/button",
+        "sourceKind": "browser"
+      },
+      {
+        "id": "cv_c0deBtn1",
+        "url": "src/stories/Button.tsx",
+        "code": null,
+        "title": "Primary Button (in code)",
+        "x_path": "",
+        "screenId": "p_qyXZIyBp",
+        "source": "src/stories/Button.tsx",
+        "sourceKind": "code",
+        "screenshot": null,
         "is_domain_specific": false
       },
       {
@@ -31,9 +45,11 @@
         "code": "<a href=\"/new\" data-hydro-click=\"{\"event_type\":\"dashboard.click\",\"payload\":{\"event_context\":\"REPOSITORIES\",\"target\":\"NEW_REPOSITORY_BUTTON\",\"dashboard_context\":\"user\",\"dashboard_version\":2,\"user_id\":190449449,\"metadata\":null,\"originating_url\":\"https://github.com/dashboard/my_top_repositories?location=left\"}}\" data-hydro-click-hmac=\"57612d4f86d4f808b3ba61a70eb43a0547519027b055769c0d236cea6b3263d0\" data-view-component=\"true\" class=\"Button--primary Button--small Button\"><span class=\"Button-content\"><span class=\"Button-visual Button-leadingVisual\"><svg aria-hidden=\"true\" height=\"16\" viewBox=\"0 0 16 16\" version=\"1.1\" width=\"16\" data-view-component=\"true\" class=\"octicon octicon-repo\">...</span><span class=\"Button-label\">New</span></span></a>",
         "title": "New Repository Button",
         "x_path": "//*[contains(@class, 'Button--primary Button--small Button')]",
-        "page_id": null,
         "screenshot": "https://lchwovxxbgcdycaqmftj.supabase.co/storage/v1/object/public/public_screenshots/b_29btSDq0/screenshot-cv_9sdFEp70-251026121401-0@2x.png",
-        "is_domain_specific": false
+        "is_domain_specific": false,
+        "screenId": "p_ySF2d2T0",
+        "source": "//*[contains(@class, 'Button--primary Button--small Button')]",
+        "sourceKind": "browser"
       },
       {
         "id": "cv_gqTTgAIE",
@@ -41,9 +57,11 @@
         "code": "<button type=\"button\" aria-haspopup=\"true\" aria-expanded=\"false\" tabindex=\"0\" class=\"prc-Button-ButtonBase-c50BI\" data-loading=\"false\" data-size=\"medium\" data-variant=\"primary\" aria-describedby=\":R75ab:-loading-announcement\" id=\":R75ab:\"><span data-component=\"buttonContent\" data-align=\"center\" class=\"prc-Button-ButtonContent-HKbr-\"><span data-component=\"leadingVisual\" class=\"prc-Button-Visual-2epfX prc-Button-VisualWrap-Db-eB\"><svg aria-hidden=\"true\" focusable=\"false\" class=\"octicon octicon-code hide-sm\" viewBox=\"0 0 16 16\" width=\"16\" height=\"16\" fill=\"currentColor\" display=\"inline-block\" overflow=\"visible\" style=\"vertical-align: text-bottom;\">...</span><span data-component=\"text\" class=\"prc-Button-Label-pTQ3x\">Code</span><span data-component=\"trailingVisual\" class=\"prc-Button-Visual-2epfX prc-Button-VisualWrap-Db-eB\"><svg aria-hidden=\"true\" focusable=\"false\" class=\"octicon octicon-triangle-down\" viewBox=\"0 0 16 16\" width=\"16\" height=\"16\" fill=\"currentColor\" display=\"inline-block\" overflow=\"visible\" style=\"vertical-align: text-bottom;\">...</span></span></button>",
         "title": "Code Repository Button",
         "x_path": "//*[@id=\":R75ab:\"]",
-        "page_id": null,
         "screenshot": "https://lchwovxxbgcdycaqmftj.supabase.co/storage/v1/object/public/public_screenshots/component_views/cv_gqTTgAIE-1761578688461.png",
-        "is_domain_specific": false
+        "is_domain_specific": false,
+        "screenId": "p_RvXzhrDT",
+        "source": "//*[@id=\":R75ab:\"]",
+        "sourceKind": "browser"
       },
       {
         "id": "cv_ucpME4AM",
@@ -51,9 +69,11 @@
         "code": "<button type=\"submit\" class=\"prc-Button-ButtonBase-c50BI mt-4\" data-loading=\"false\" data-no-visuals=\"true\" data-size=\"medium\" data-variant=\"primary\" aria-describedby=\":rq:-loading-announcement\"><span data-component=\"buttonContent\" data-align=\"center\" class=\"prc-Button-ButtonContent-HKbr-\"><span data-component=\"text\" class=\"prc-Button-Label-pTQ3x\">Create repository</span></span></button>",
         "title": "Create Repository Button",
         "x_path": "//body/div/div[6]/main/react-app/div/form/div[4]/button",
-        "page_id": null,
         "screenshot": "https://lchwovxxbgcdycaqmftj.supabase.co/storage/v1/object/public/public_screenshots/component_views/cv_ucpME4AM-1761578705205.png",
-        "is_domain_specific": false
+        "is_domain_specific": false,
+        "screenId": "p_qyXZIyBp",
+        "source": "//body/div/div[6]/main/react-app/div/form/div[4]/button",
+        "sourceKind": "browser"
       },
       {
         "id": "cv_FWWm7Aj0",
@@ -61,9 +81,11 @@
         "code": "<button type=\"button\" data-testid=\"notifications-subscriptions-menu-button-mobile\" aria-label=\"Watch: Participating in primer/react\" aria-haspopup=\"true\" aria-expanded=\"false\" tabindex=\"0\" class=\"prc-Button-ButtonBase-c50BI NotificationsSubscriptionsMenu-module__ActionMenuButton--UgYy6\" data-loading=\"false\" data-size=\"small\" data-variant=\"default\" aria-describedby=\":rt:-loading-announcement\" id=\":rt:\"><span data-component=\"buttonContent\" data-align=\"center\" class=\"prc-Button-ButtonContent-HKbr-\"><span data-component=\"leadingVisual\" class=\"prc-Button-Visual-2epfX prc-Button-VisualWrap-Db-eB\"><svg aria-hidden=\"true\" focusable=\"false\" class=\"octicon octicon-eye\" viewBox=\"0 0 16 16\" width=\"16\" height=\"16\" fill=\"currentColor\" display=\"inline-block\" overflow=\"visible\" style=\"vertical-align: text-bottom;\">...</span><span data-component=\"text\" class=\"prc-Button-Label-pTQ3x\"><span class=\"ml-2 Counter rounded-3 NotificationsSubscriptionsMenu-module__watchCounter--vgIup\">...</span></span><span data-component=\"trailingAction\" class=\"prc-Button-Visual-2epfX prc-Button-VisualWrap-Db-eB\"><svg aria-hidden=\"true\" focusable=\"false\" class=\"octicon octicon-triangle-down\" viewBox=\"0 0 16 16\" width=\"16\" height=\"16\" fill=\"currentColor\" display=\"inline-block\" overflow=\"visible\" style=\"vertical-align: text-bottom;\"><path d=\"m4.427 ...\"></svg></span></button>",
         "title": "Repository Watch Button",
         "x_path": "//button[@data-testid='notifications-subscriptions-menu-button-mobile']",
-        "page_id": null,
         "screenshot": "https://lchwovxxbgcdycaqmftj.supabase.co/storage/v1/object/public/public_screenshots/component_views/cv_FWWm7Aj0-1761578759829.png",
-        "is_domain_specific": false
+        "is_domain_specific": false,
+        "screenId": "p_RvXzhrDT",
+        "source": "//button[@data-testid='notifications-subscriptions-menu-button-mobile']",
+        "sourceKind": "browser"
       },
       {
         "id": "cv_8HDAY0VY",
@@ -71,16 +93,18 @@
         "code": "<button type=\"button\" aria-haspopup=\"true\" aria-expanded=\"false\" tabindex=\"0\" style=\"min-width:0\" aria-label=\"main branch\" data-testid=\"anchor-button\" class=\"prc-Button-ButtonBase-c50BI overview-ref-selector width-full RefSelectorAnchoredOverlay-module__RefSelectorOverlayBtn--D34zl\" data-loading=\"false\" data-size=\"medium\" data-variant=\"default\" aria-describedby=\"ref-picker-repos-header-ref-selector-loading-announcement\" id=\"ref-picker-repos-header-ref-selector\" data-hotkey=\"w\"><span data-component=\"buttonContent\" data-align=\"center\" class=\"prc-Button-ButtonContent-HKbr-\"><span data-component=\"text\" class=\"prc-Button-Label-pTQ3x\"><div class=\"RefSelectorAnchoredOverlay-module__RefSelectorOverlayContainer--mCbv8\">...</span><span data-component=\"trailingVisual\" class=\"prc-Button-Visual-2epfX prc-Button-VisualWrap-Db-eB\"><svg aria-hidden=\"true\" focusable=\"false\" class=\"octicon octicon-triangle-down\" viewBox=\"0 0 16 16\" width=\"16\" height=\"16\" fill=\"currentColor\" display=\"inline-block\" overflow=\"visible\" style=\"vertical-align:text-bottom\">...</span></span></button>",
         "title": "Branch Select Button",
         "x_path": "//button[@aria-label='main branch']",
-        "page_id": null,
         "screenshot": "https://lchwovxxbgcdycaqmftj.supabase.co/storage/v1/object/public/public_screenshots/component_views/cv_8HDAY0VY-1761578783819.png",
-        "is_domain_specific": false
+        "is_domain_specific": false,
+        "screenId": null,
+        "source": "//button[@aria-label='main branch']",
+        "sourceKind": "browser"
       }
     ],
     "board_id": "b_29btSDq0",
-    "pages": [
+    "screens": [
       {
+        "screenId": "p_RvXzhrDT",
         "title": "React",
-        "page_id": "p_RvXzhrDT",
         "is_dynamic": false,
         "screenshot": null,
         "default_url": "https://github.com/primer/react",
@@ -88,8 +112,8 @@
         "component_view_count": 0
       },
       {
+        "screenId": "p_b8J6Amau",
         "title": "Branches",
-        "page_id": "p_b8J6Amau",
         "is_dynamic": false,
         "screenshot": null,
         "default_url": "https://github.com/primer/react/branches",
@@ -97,8 +121,8 @@
         "component_view_count": 0
       },
       {
+        "screenId": "p_djqYwrL1",
         "title": "4536",
-        "page_id": "p_djqYwrL1",
         "is_dynamic": false,
         "screenshot": null,
         "default_url": "https://github.com/primer/react/pull/4536",
@@ -106,8 +130,8 @@
         "component_view_count": 0
       },
       {
+        "screenId": "p_Pr0Bxl0e",
         "title": "Search",
-        "page_id": "p_Pr0Bxl0e",
         "is_dynamic": false,
         "screenshot": null,
         "default_url": "https://github.com/search?q=primer&type=repositories",
@@ -115,8 +139,8 @@
         "component_view_count": 0
       },
       {
+        "screenId": "p_qyXZIyBp",
         "title": "New",
-        "page_id": "p_qyXZIyBp",
         "is_dynamic": false,
         "screenshot": "https://lchwovxxbgcdycaqmftj.supabase.co/storage/v1/object/public/public_screenshots/b_29btSDq0/screenshot-p_qyXZIyBp-251203172739-0@2x.png",
         "default_url": "https://github.com/new",
@@ -124,8 +148,8 @@
         "component_view_count": 0
       },
       {
+        "screenId": "p_cJMSnuQn",
         "title": "Docs",
-        "page_id": "p_cJMSnuQn",
         "is_dynamic": false,
         "screenshot": null,
         "default_url": "https://github.com/primer/react/tree/main/docs",
@@ -133,8 +157,8 @@
         "component_view_count": 0
       },
       {
+        "screenId": "p_ySF2d2T0",
         "title": "Github  Home",
-        "page_id": "p_ySF2d2T0",
         "is_dynamic": false,
         "screenshot": "https://lchwovxxbgcdycaqmftj.supabase.co/storage/v1/object/public/public_screenshots/b_29btSDq0/screenshot-p_ySF2d2T0-251203172751-0@2x.png",
         "default_url": "https://github.com/",
@@ -142,8 +166,8 @@
         "component_view_count": 0
       },
       {
+        "screenId": "p_GE7rNe1i",
         "title": "Issues",
-        "page_id": "p_GE7rNe1i",
         "is_dynamic": false,
         "screenshot": null,
         "default_url": "https://github.com/issues",
@@ -151,8 +175,8 @@
         "component_view_count": 0
       },
       {
+        "screenId": "p_e1xQGIfl",
         "title": "Marketplace",
-        "page_id": "p_e1xQGIfl",
         "is_dynamic": false,
         "screenshot": null,
         "default_url": "https://github.com/marketplace",
