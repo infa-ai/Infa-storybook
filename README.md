@@ -6,6 +6,16 @@
 
 A Storybook addon that connects your component documentation with real-world product usage. See where and how your design system components are actually being used across your products—directly in Storybook.
 
+## What it looks like
+
+**In Storybook:** the Usage tab of a story shows the component as your Infa board knows it: its label and description, the flows that use it, and each place it was captured on your product, with a screenshot, where it was, whether it is the default view, and whether it is still found there (**Verified**) or has drifted (**Stale**). **Open in Infa** goes to the component on the board.
+
+![The Usage tab of a PromoChip story: the component's label and description, "Used in" two flows, and two captured views marked Default and Verified, and Stale](https://lchwovxxbgcdycaqmftj.supabase.co/storage/v1/object/public/screenshots/readme/01-storybook-usage-tab.png)
+
+**In Infa:** the same component on its board page: its views with the same status, and the flows and screens it is related to.
+
+![The same component's page in Infa: its two views with Verified, Default and Stale, and Related listing two flows and two screens](https://lchwovxxbgcdycaqmftj.supabase.co/storage/v1/object/public/screenshots/readme/02-infa-component-views.png)
+
 ## The Problem
 
 Design system teams often struggle to connect Storybook components with their real-world product usage. While Storybook provides a centralized place to document and showcase components, it doesn't show:
