@@ -3,11 +3,16 @@ import {
   boardComponentsUrl,
   componentPageUrl,
   generateInfaLink,
+  groupViewsByDomain,
+  groupViewsByScreen,
+  NO_SCREEN_KEY,
   normalizeStoryPath,
+  screenPageUrl,
   sortViewsDefaultFirst,
   storyComponentIds,
+  viewLocator,
 } from "../src/components/Panel/utils";
-import type { ComponentView } from "../src/types";
+import type { ComponentView, Screen } from "../src/types";
 
 const view = (title: string, extra: Partial<ComponentView> = {}): ComponentView => ({
   title,
@@ -16,7 +21,9 @@ const view = (title: string, extra: Partial<ComponentView> = {}): ComponentView 
   screenshot: null,
   code: null,
   is_domain_specific: false,
-  page_id: null,
+  screenId: null,
+  source: null,
+  sourceKind: null,
   ...extra,
 });
 
@@ -63,5 +70,82 @@ describe("sortViewsDefaultFirst", () => {
   });
   it("changes nothing when no view is the default (the PAT script's data)", () => {
     expect(sortViewsDefaultFirst([view("a"), view("b")]).map((v) => v.title)).toEqual(["a", "b"]);
+  });
+});
+
+const browser = (title: string, screenId: string | null, url = `https://app.example/${title}`) =>
+  view(title, { url, x_path: `//main/${title}`, source: `//main/${title}`, sourceKind: "browser", screenId });
+const code = (title: string, screenId: string | null) =>
+  view(title, { url: `src/${title}.tsx`, source: `src/${title}.tsx`, sourceKind: "code", screenId });
+const screen = (screenId: string, title: string): Screen => ({
+  screenId,
+  title,
+  url_pattern: `https://app.example/${title}`,
+  default_url: null,
+  is_dynamic: false,
+  screenshot: null,
+  component_view_count: null,
+});
+
+describe("groupViewsByScreen", () => {
+  it("groups by screen in the order the usages come, browser and code together, no screen last", () => {
+    const views = [browser("a", "s_2"), browser("b", null), code("c", "s_1"), code("d", "s_2"), browser("e", null)];
+    const groups = groupViewsByScreen(views, [screen("s_1", "Home"), screen("s_2", "Checkout")]);
+    expect(groups.map((g) => [g.key, g.title, g.views.map((v) => v.title)])).toEqual([
+      ["s_2", "Checkout", ["a", "d"]],
+      ["s_1", "Home", ["c"]],
+      [NO_SCREEN_KEY, "Not on a screen yet", ["b", "e"]],
+    ]);
+    expect(groups[0]?.screen?.title).toBe("Checkout");
+    expect(groups[2]?.screen).toBeNull();
+    expect(groups[2]?.screenId).toBeNull();
+  });
+  it("titles a screen the data does not describe with its id", () => {
+    const groups = groupViewsByScreen([browser("a", "s_9")], undefined);
+    expect(groups).toEqual([expect.objectContaining({ key: "s_9", title: "s_9", screen: null, screenId: "s_9" })]);
+  });
+  it("puts everything under one group when no usage is on a screen, and nothing for no usages", () => {
+    expect(groupViewsByScreen([browser("a", null), code("b", null)], []).map((g) => g.key)).toEqual([NO_SCREEN_KEY]);
+    expect(groupViewsByScreen([], [screen("s_1", "Home")])).toEqual([]);
+  });
+});
+
+describe("groupViewsByDomain", () => {
+  it("groups browser usages by domain and code usages under Code", () => {
+    const views = [browser("a", null, "https://one.example/x"), code("b", null), browser("c", null, "https://two.example/")];
+    expect(groupViewsByDomain(views).map((g) => [g.title, g.views.length])).toEqual([
+      ["one.example", 1],
+      ["Code", 1],
+      ["two.example", 1],
+    ]);
+  });
+});
+
+describe("viewLocator", () => {
+  it("shows the file for a usage found in code", () => {
+    expect(viewLocator(code("Button", "s_1"))).toEqual({ primary: "src/Button.tsx", secondary: null });
+  });
+  it("shows the page for a usage found in the browser, the XPath second", () => {
+    expect(viewLocator(browser("a", null, "https://app.example/cart"))).toEqual({
+      primary: "app.example/cart",
+      secondary: "//main/a",
+    });
+  });
+  it("falls back to the XPath when the page is unknown", () => {
+    expect(viewLocator(browser("a", null, ""))).toEqual({ primary: "//main/a", secondary: null });
+  });
+});
+
+describe("links for usages", () => {
+  it("opens a screen on the board's own app", () => {
+    expect(screenPageUrl("b_1", "s_1")).toBe("https://infa.ai/b/b_1/screens/s_1");
+    expect(screenPageUrl("b_1", "s_1", "http://localhost:3000/b/b_1/components/mc_a")).toBe(
+      "http://localhost:3000/b/b_1/screens/s_1",
+    );
+    expect(screenPageUrl("b_1", null)).toBeNull();
+  });
+  it("never links a code usage to its file path as if it were a page", () => {
+    expect(generateInfaLink(code("Button", null), null, null)).toBe("");
+    expect(generateInfaLink(code("Button", null), "b_1", "mc_a")).toBe("https://infa.ai/b/b_1/components/mc_a");
   });
 });

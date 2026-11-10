@@ -11,7 +11,7 @@ Panel/
 ├── styles.ts                 # All styled components
 ├── ComponentHeader.tsx       # Displays component metadata
 ├── ComponentViewCard.tsx     # Displays individual component view
-├── ComponentsView.tsx        # Groups views by component
+├── ComponentsView.tsx        # Each component's usages, grouped by screen
 └── EmptyState.tsx           # Shown when no data is available
 ```
 

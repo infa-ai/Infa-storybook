@@ -1,5 +1,7 @@
 /**
- * ComponentViewCard component - Displays a single component view with screenshot, code, and URL
+ * ComponentViewCard component - one usage of a component: its screenshot (or
+ * live render), where it was found (a Browser or Code badge) and its locator
+ * (the file for code; the page for the browser, the XPath as a quieter line).
  */
 
 import React, { useState } from "react";
@@ -8,7 +10,9 @@ import type { ComponentView } from "../../types";
 import {
   ComponentViewCardWrapper,
   ViewCardTitle,
-  PageUrl,
+  LocatorRow,
+  LocatorText,
+  SourceBadge,
   XPathContainer,
   XPathText,
   XPathArrowButton,
@@ -16,7 +20,7 @@ import {
   ViewChip,
   LiveToggle,
 } from "./styles";
-import { extractInfaIds, generateInfaLink, formatUrlForDisplay, HEALTH_COPY } from "./utils";
+import { extractInfaIds, generateInfaLink, HEALTH_COPY, SOURCE_KIND_COPY, viewLocator } from "./utils";
 import ImagePreview from "./ImagePreview";
 import { CodePreview } from "./CodePreview";
 import { LivePreview } from "./LivePreview";
@@ -44,9 +48,16 @@ export const ComponentViewCard: React.FC<ComponentViewCardProps> = ({
   const infaLink = generateInfaLink(view, boardId, componentId ?? null, boardUrl);
   const health = view.health ? HEALTH_COPY[view.health.state] : null;
   const live = showLive && view.preview_html_url;
+  const kind = view.sourceKind ? SOURCE_KIND_COPY[view.sourceKind] : null;
+  const locator = viewLocator(view);
 
   return (
-    <ComponentViewCardWrapper data-testid="infa-usage-view" data-view-id={view.id}>
+    <ComponentViewCardWrapper
+      data-testid="infa-usage-view"
+      data-view-id={view.id}
+      data-source-kind={view.sourceKind ?? undefined}
+      data-screen-id={view.screenId ?? undefined}
+    >
       {live ? (
         <div style={{ margin: "6px", width: "calc(100% - 12px)" }}>
           <LivePreview url={view.preview_html_url!} title={view.title} />
@@ -69,7 +80,20 @@ export const ComponentViewCard: React.FC<ComponentViewCardProps> = ({
           gap: "2px",
         }}
       >
-        <PageUrl>{formatUrlForDisplay(view.url)}</PageUrl>
+        {(kind || locator.primary) && (
+          <LocatorRow>
+            {kind && view.sourceKind && (
+              <SourceBadge kind={view.sourceKind} title={kind.title} data-testid="infa-usage-view-source-badge">
+                {kind.label}
+              </SourceBadge>
+            )}
+            {locator.primary && (
+              <LocatorText title={view.source ?? locator.primary} data-testid="infa-usage-view-locator">
+                {locator.primary}
+              </LocatorText>
+            )}
+          </LocatorRow>
+        )}
         <ViewCardTitle>{view.title}</ViewCardTitle>
         {(view.is_default || health || view.preview_html_url) && (
           <ViewChipRow>
@@ -111,7 +135,7 @@ export const ComponentViewCard: React.FC<ComponentViewCardProps> = ({
         </div>
       )}
 
-      {view.x_path && (
+      {infaLink && (
         <div
           style={{
             paddingLeft: "16px",
@@ -120,7 +144,10 @@ export const ComponentViewCard: React.FC<ComponentViewCardProps> = ({
           }}
         >
           <XPathContainer>
-            <XPathText>{view.x_path}</XPathText>
+            {/* The XPath, for a usage found in the browser: secondary, full text on hover. */}
+            <XPathText title={locator.secondary ?? undefined} data-testid="infa-usage-view-xpath">
+              {locator.secondary ?? ""}
+            </XPathText>
             <XPathArrowButton
               href={infaLink}
               target="_blank"

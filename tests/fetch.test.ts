@@ -53,29 +53,36 @@ describe("explainApiError", () => {
 });
 
 describe("toComponentData", () => {
-  it("maps the API's screens back onto the panel's pages", () => {
+  it("maps the API's screens and each view's screen, source and kind", () => {
     const out = toComponentData({
       id: "mc_a",
       title: "Button",
       board_id: "b_1",
-      component_views: [{ title: "v", screen_id: "s_1" }],
+      component_views: [{ title: "v", x_path: "//main/button", url: "https://app.example/", screen_id: "s_1" }],
       screens: [{ screen_id: "s_1", title: "Home" }],
     });
-    expect(out.pages).toEqual([{ screen_id: "s_1", title: "Home", page_id: "s_1" }]);
-    expect(out.component_views[0].page_id).toBe("s_1");
+    expect(out.screens).toEqual([{ title: "Home", screenId: "s_1" }]);
+    expect(out.component_views[0]).toEqual({
+      title: "v",
+      x_path: "//main/button",
+      url: "https://app.example/",
+      screenId: "s_1",
+      source: "//main/button",
+      sourceKind: "browser",
+    });
     expect(out.board_id).toBe("b_1");
   });
   it("still reads the old pages shape, and fills what is missing", () => {
-    const out = toComponentData({ pages: [{ page_id: "p_1" }] });
+    const out = toComponentData({ pages: [{ page_id: "p_1" }], component_views: [{ page_id: "p_1" }] });
     expect(out).toMatchObject({
       title: "Untitled Component",
       description: null,
       query: null,
       external_links: [],
       labels: [],
-      component_views: [],
       board_id: null,
     });
-    expect(out.pages[0].page_id).toBe("p_1");
+    expect(out.screens[0].screenId).toBe("p_1");
+    expect(out.component_views[0]).toEqual({ screenId: "p_1", source: null, sourceKind: null });
   });
 });
