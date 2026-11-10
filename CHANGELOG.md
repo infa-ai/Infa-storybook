@@ -1,3 +1,20 @@
+# v1.2.0 (Tue Nov 10 2026)
+
+#### 🚀 Enhancement
+
+- Release 1.2.0: CLI sign-in (#7) and the release job fix [#8](https://github.com/infa-ai/Infa-storybook/pull/8) ([@desyniq](https://github.com/desyniq))
+
+#### 🐛 Bug Fix
+
+- feat: sign in with the Infa CLI, no ids in stories, and the board's views, health and flows in the panel [#7](https://github.com/infa-ai/Infa-storybook/pull/7) ([@desyniq](https://github.com/desyniq))
+- Show the project's own usage data and ship the fetch command [#6](https://github.com/infa-ai/Infa-storybook/pull/6) ([@desyniq](https://github.com/desyniq))
+
+#### Authors: 1
+
+- Desyniq ([@desyniq](https://github.com/desyniq))
+
+---
+
 # v1.1.2 (Thu Dec 04 2025)
 
 #### 🐛 Bug Fix
