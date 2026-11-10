@@ -33,19 +33,22 @@ export const SyncModal: React.FC<SyncModalProps> = ({ isOpen, onClose }) => {
         
         <ModalBody>
           <ModalSection>
-            <h4>Step 1: Tag Components in Infa</h4>
-            <p>
-              Use the Infa browser extension or dashboard to tag components in your products.
-              Click the "Tag Components" button to open your Infa board.
+            <h4>Step 1: Sign in with the Infa CLI</h4>
+            <p>Once per machine, from your project&apos;s root. It opens the browser:</p>
+            <ModalCode>npx infa auth</ModalCode>
+            <ModalCode>npx infa board</ModalCode>
+            <p style={{ fontSize: "12px", marginTop: "0.5rem", opacity: 0.8 }}>
+              <code>infa board</code> picks the board this repo belongs to. Team boards work too.
             </p>
           </ModalSection>
 
           <ModalSection>
-            <h4>Step 2: Run the Fetch Script</h4>
-            <p>Execute the following command to pull the latest data from Infa:</p>
-            <ModalCode>npx infa-usage-fetch</ModalCode>
+            <h4>Step 2: Sync</h4>
+            <ModalCode>npx infa storybook sync</ModalCode>
             <p style={{ fontSize: "12px", marginTop: "0.5rem", opacity: 0.8 }}>
-              This will update <code>src/data/usage-data.json</code> with fresh component data.
+              Writes <code>src/data/usage-data.json</code>. Each story is linked to its component
+              the way <code>infa publish</code> links it, so a component published with{" "}
+              <code>npx infa publish src/Button.tsx</code> needs no ids in your stories.
             </p>
           </ModalSection>
 
@@ -53,33 +56,32 @@ export const SyncModal: React.FC<SyncModalProps> = ({ isOpen, onClose }) => {
             <h4>Step 3: Restart Storybook</h4>
             <p>Storybook reads the data when it starts, so restart (or rebuild) it:</p>
             <ModalCode>npm run storybook</ModalCode>
-            <p style={{ fontSize: "12px", marginTop: "0.5rem", opacity: 0.8 }}>
-              The Usage panel will immediately show all newly tagged components.
-            </p>
           </ModalSection>
 
           <ModalSection>
-            <h4>Automated Sync (Recommended)</h4>
+            <h4>In CI</h4>
             <p>
-              For continuous updates, integrate the fetch script into your CI/CD pipeline.
-              This ensures usage data is always fresh when you deploy Storybook.
+              Set <code>INFA_ACCESS_TOKEN</code> (an access token from your Infa profile) and{" "}
+              <code>INFA_BOARD_ID</code> as secrets, then run <code>npx infa storybook sync</code>{" "}
+              before <code>storybook build</code>.
             </p>
             <p style={{ marginTop: "0.75rem" }}>
               <ModalLink
-                href="https://infa.ai/docs/integrations/index"
+                href="https://github.com/infa-ai/Infa-storybook#readme"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                View CI/CD Integration Guide →
+                Setup guide →
               </ModalLink>
             </p>
           </ModalSection>
 
           <ModalSection style={{ borderTop: "1px solid rgba(0,0,0,0.1)", paddingTop: "1rem" }}>
             <p style={{ fontSize: "12px", opacity: 0.7, margin: 0 }}>
-              <strong>Note:</strong> Your Infa API key is only used during build time and never
-              exposed to the browser. Tagged components and deep links continue to work even
-              after subscription deactivation.
+              <strong>Older setup:</strong> <code>INFA_API_KEY=… npx infa-usage-fetch</code> still
+              works with a Personal Access Token and <code>mcComponentIds</code> in your stories, for
+              boards the token&apos;s account owns. Either way, nothing secret reaches the browser:
+              the data file holds only what the panel shows.
             </p>
           </ModalSection>
         </ModalBody>

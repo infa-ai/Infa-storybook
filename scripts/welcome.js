@@ -1,5 +1,3 @@
-/* eslint-disable eslint-comments/disable-enable-pair */
-/* eslint-disable no-console */
 import prompts from 'prompts';
 import { dedent } from 'ts-dedent';
 import { dirname, resolve } from 'path';
@@ -153,7 +151,7 @@ const main = async () => {
   const readme = resolve(__dirname, `../README.md`);
   let readmeContents = await readFile(readme, "utf-8");
 
-  const regex = /<\!-- README START -->([\s\S]*)<\!-- README END -->/g;
+  const regex = /<!-- README START -->([\s\S]*)<!-- README END -->/g;
 
   readmeContents = readmeContents.replace(
     regex,

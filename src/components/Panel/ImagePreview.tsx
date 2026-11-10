@@ -74,7 +74,7 @@ const ImagePreview: React.FC<ImagePreviewProps> = ({
   htmlContent,
   elementDimensions,
   type = "component",
-  mode = "preview",
+  mode: _mode = "preview",
   isLoading = false,
   level = 0,
   placeholderContent,

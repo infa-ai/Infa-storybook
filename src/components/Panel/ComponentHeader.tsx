@@ -17,6 +17,9 @@ import {
   ViewMoreTextButton,
   ComponentTitleRow,
   CollapseButton,
+  FlowList,
+  FlowListLabel,
+  ViewChip,
 } from "./styles";
 
 interface ComponentHeaderProps {
@@ -24,6 +27,10 @@ interface ComponentHeaderProps {
   description: string | null;
   labels: ComponentData["labels"];
   externalLinks: ComponentData["external_links"];
+  /** Flows that use the component (from `infa storybook sync`). */
+  flows?: ComponentData["flows"];
+  /** The component's page on the board. */
+  boardUrl?: string;
   isCollapsed?: boolean;
   onToggleCollapsed?: () => void;
 }
@@ -35,6 +42,8 @@ export const ComponentHeader: React.FC<ComponentHeaderProps> = ({
   description,
   labels,
   externalLinks,
+  flows,
+  boardUrl,
   isCollapsed = false,
   onToggleCollapsed,
 }) => {
@@ -97,9 +106,12 @@ export const ComponentHeader: React.FC<ComponentHeaderProps> = ({
             </>
           )}
 
-          {externalLinks && externalLinks.length > 0 && (
+          {((externalLinks && externalLinks.length > 0) || boardUrl) && (
             <ExternalLinksContainer>
-              {externalLinks.map((link, idx) => (
+              {[
+                ...(boardUrl ? [{ title: "Open in Infa", url: boardUrl }] : []),
+                ...(externalLinks ?? []),
+              ].map((link, idx) => (
                 <ExternalLink
                   key={idx}
                   href={link.url}
@@ -127,6 +139,28 @@ export const ComponentHeader: React.FC<ComponentHeaderProps> = ({
                 </ExternalLink>
               ))}
             </ExternalLinksContainer>
+          )}
+
+          {flows && flows.length > 0 && (
+            <FlowList data-testid="infa-usage-flows">
+              <li><FlowListLabel>Used in</FlowListLabel></li>
+              {flows.map((flow) => (
+                <li key={flow.id}>
+                  <ExternalLink
+                    href={flow.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title={
+                      flow.reasons?.includes("intention_component")
+                        ? "Declared on this flow"
+                        : "A test of this flow uses it"
+                    }
+                  >
+                    <ViewChip>{flow.name}</ViewChip>
+                  </ExternalLink>
+                </li>
+              ))}
+            </FlowList>
           )}
         </>
       )}

@@ -66,9 +66,7 @@ A Storybook addon that runs in the browser:
 
 ## Prerequisites
 
-To use this addon, you'll need:
-
-- **An Infa account with components tagged on a board you own**, and a Personal Access Token (step 3 below)
+- **An Infa account and a board** with your components on it — published from code with the [Infa CLI](https://www.npmjs.com/package/infa) (`infa publish`) or tagged in your product with the Infa browser extension. Personal and team boards both work.
 - **Get started at**: [infa.ai](https://infa.ai)
 
 **Good news:** Once you've tagged your components and added deep links, they'll continue to work even after subscription deactivation. You'll still be able to see where and how components are used in your products.
@@ -99,97 +97,50 @@ const config: StorybookConfig = {
 export default config;
 ```
 
-### 2. Configure Your Stories
+### 2. Sign in with the Infa CLI (once)
 
-Add Infa main component IDs to your story parameters:
-
-```typescript
-// Button.stories.tsx
-import type { Meta, StoryObj } from "@storybook/react";
-import { Button } from "./Button";
-
-const meta: Meta<typeof Button> = {
-  component: Button,
-  parameters: {
-    usage: {
-      mcComponentIds: ["mc_abc12345"], // Your Infa main component ID
-    },
-  },
-};
-
-export default meta;
-```
-
-**Multiple Components:**
-
-Connect multiple Infa components to a single story:
-
-```typescript
-export default {
-  component: ComplexButton,
-  parameters: {
-    usage: {
-      mcComponentIds: [
-        "mc_abc12345", // Primary button component
-        "mc_def67890", // Icon component used within button
-      ],
-    },
-  },
-};
-```
-
-**Story-Level Override:**
-
-Override component IDs at the story level:
-
-```typescript
-export const Primary: StoryObj<typeof Button> = {
-  parameters: {
-    usage: {
-      mcComponentIds: ["mc_primary_variant"],
-    },
-  },
-};
-
-export const Secondary: StoryObj<typeof Button> = {
-  parameters: {
-    usage: {
-      mcComponentIds: ["mc_secondary_variant"],
-    },
-  },
-};
-```
-
-### 3. Get your Infa API key
-
-The key is a **Personal Access Token** from your Infa profile:
-
-1. Open [infa.ai/profile?tab=integrations](https://infa.ai/profile?tab=integrations) (avatar → **Profile** → **Integrations**).
-2. Under **Personal Access Tokens**, click **Generate New Token**.
-3. Click the token's **copy** button. The table shows only the first four characters (`abcd****`); copying that text gives a key Infa does not recognise.
-
-Set it as `INFA_API_KEY`, in your shell, your CI secrets, or a `.env` file in your project root:
+From your project's root:
 
 ```bash
-export INFA_API_KEY="<your 64-character token>"
+npx infa auth    # opens the browser; the session is saved in .infa/config.yml (gitignored)
+npx infa board   # picks the board this repo belongs to
 ```
 
-### 4. Fetch the usage data
+You sign in as yourself, so the addon sees exactly what you see on the board — a team board included. There is no key to copy and no header to set.
 
-Run the bundled command from your project root:
+### 3. Put your components on the board
+
+Publish a component (every view of its `.preview.tsx` sidecar or stories) with the CLI:
 
 ```bash
-npx infa-usage-fetch
+npx infa publish src/components/Button.tsx
 ```
 
-It finds every `mcComponentIds` in your `*.stories.*` files, asks Infa for those components, and writes `src/data/usage-data.json`. Options: `--stories <dir>` (where to look, default: the current directory), `--out <file>` (default `src/data/usage-data.json`), `--ids mc_a,mc_b` (skip the scan). It needs no extra dependencies (Node 18.17 or later).
+That is also what links each story to its component: the CLI records the component's id in the sidecar (`infa.componentId`) and `.infa/components.yml`, and `infa storybook sync` reads it from there. **Your stories need no ids.**
 
-To run it as an npm script:
+Components you tagged in your product with the Infa browser extension can be named in a story instead — see [Naming components in a story](#naming-components-in-a-story).
+
+### 4. Sync the usage data
+
+```bash
+npx infa storybook sync
+```
+
+It finds your `*.stories.*` files, works out the board component each one documents, reads those components from the board and writes `src/data/usage-data.json`:
+
+```
+◇  Read 2 component(s) from b_abc12345
+●  src/components/Button.stories.tsx → mc_abc12345 (sidecar infa.componentId)
+●  src/components/Card.stories.tsx → mc_def67890 (mcComponentIds)
+└  Wrote 2 component(s) to src/data/usage-data.json. Restart Storybook to see them.
+```
+
+A story's components are, in order: the `mcComponentIds` it names, then the component it renders as the CLI knows it — its sidecar's `infa.componentId`, `.infa/components.yml`, the legacy `@infa-component` annotation, and finally the one board component whose views were published from that file. Options: `--out <file>`, `--stories <dir>`, `--ids mc_a,mc_b`, `--board <id>`, `--dry-run`, `--json`. To run it as an npm script:
 
 ```json
 {
   "scripts": {
-    "fetch-usage-data": "infa-usage-fetch"
+    "usage:sync": "infa storybook sync"
   }
 }
 ```
@@ -207,7 +158,44 @@ addons: [{ name: "storybook-infa-usage", options: { dataFile: "data/usage.json" 
 npm run storybook
 ```
 
-Open any story with configured `mcComponentIds` and check the **Usage** panel. Storybook reads the data file when it starts, so restart it (or rebuild) after fetching.
+Open a story and check the **Usage** panel. Storybook reads the data file when it starts, so restart it (or rebuild) after syncing.
+
+## Naming components in a story
+
+A story can name its components explicitly — needed for components tagged in your product (they have no file in your repo), and always honoured alongside what the CLI finds:
+
+```typescript
+// Button.stories.tsx
+import type { Meta, StoryObj } from "@storybook/react";
+import { Button } from "./Button";
+
+const meta: Meta<typeof Button> = {
+  component: Button,
+  parameters: {
+    usage: {
+      mcComponentIds: ["mc_abc12345", "mc_def67890"], // Infa main component ids
+    },
+  },
+};
+
+export default meta;
+```
+
+A component's id is in its URL on the board: `https://infa.ai/b/<board>/components/mc_abc12345`. Story-level `parameters.usage` overrides the meta's, as with any Storybook parameter.
+
+## Older setup: a Personal Access Token
+
+Before the CLI, the data came from a Personal Access Token and the bundled `infa-usage-fetch` command. It still works, with two limits: it reads only components on boards **the token's own account owns** (not a team board you are a member of), and every story must name its `mcComponentIds`. Prefer `infa storybook sync`.
+
+1. Open [infa.ai/profile?tab=integrations](https://infa.ai/profile?tab=integrations) (avatar → **Profile** → **Integrations**), and under **Personal Access Tokens** click **Generate New Token**.
+2. Click the token's **copy** button. The table shows only the first four characters (`abcd****`); copying that text gives a key Infa does not recognise.
+3. Set it as `INFA_API_KEY` (shell, CI secret, or a `.env` file in your project root) and run:
+
+```bash
+INFA_API_KEY="<your 64-character token>" npx infa-usage-fetch
+```
+
+Options: `--stories <dir>`, `--out <file>`, `--ids mc_a,mc_b`. No extra dependencies (Node 18.17 or later).
 
 ### Calling the API yourself
 
@@ -225,20 +213,19 @@ The other endpoints (`get_main_components`, `get_component_views`, `get_boards`,
 
 ## Fetching Usage Data from Infa
 
-The integration script runs at build time, giving you full control over your data pipeline and keeping your Infa API key secure.
+The sync runs at build time, giving you full control over your data pipeline: no credential ever reaches the browser.
 
 ### The Workflow
 
-1. **Tag components in Infa** - Use the Infa browser extension or dashboard to tag components in your products
-2. **Configure your stories** - Add `mcComponentIds` to your story parameters
-3. **Run the fetch command** - Execute `npx infa-usage-fetch` to pull the latest data
-4. **Rebuild Storybook** - The Usage panel immediately shows all tagged components
+1. **Put components on the board** - `npx infa publish` from code, or tag them in your product with the Infa browser extension
+2. **Sync** - `npx infa storybook sync` reads them as you and maps each story to its components
+3. **Rebuild Storybook** - The Usage panel immediately shows them
 
 This build-time approach means you can continuously tag new components in Infa and see them in Storybook with a simple rebuild—no code changes needed!
 
 ### What Data Gets Fetched
 
-The script fetches rich component data from Infa's API. For each main component ID in your stories:
+The sync reads, for each component your stories document:
 
 - **Title & Description**: Component name and documentation
 - **Component Views**: Actual instances where the component appears in products
@@ -249,6 +236,12 @@ The script fetches rich component data from Infa's API. For each main component 
 - **Labels**: Tags for organization (e.g., "Deviation", "Reference", "To Refactor")
 - **External Links**: Links to design docs, component libraries, or other resources
 - **Query**: CSS selector or query used to identify the component
+- **Default view**: the component's default view comes first, marked "Default"
+- **Live render**: views published with `infa publish` carry their interactive render; the panel plays it on demand ("Live"), in a sandbox
+- **Element health**: whether each view's element is still found on the product — Verified, Recovered, Stale, Broken or Removed — as the Infa extension and `infa flow run` last checked it
+- **Flows**: the user flows that use the component (declared on the board, or exercised by their tests), linked to the board
+
+Anything the board does not have is left out, and the panel shows nothing for it. The PAT command (`infa-usage-fetch`) fetches the first six only.
 
 ### Component Views Explained
 
@@ -292,15 +285,16 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "22"
 
       - name: Install dependencies
         run: npm ci
 
-      - name: Fetch usage data from Infa
+      - name: Sync usage data from Infa
         env:
-          INFA_API_KEY: ${{ secrets.INFA_API_KEY }}
-        run: npx infa-usage-fetch
+          INFA_ACCESS_TOKEN: ${{ secrets.INFA_ACCESS_TOKEN }}
+          INFA_BOARD_ID: ${{ vars.INFA_BOARD_ID }}
+        run: npx infa storybook sync
 
       - name: Build Storybook
         run: npm run build-storybook
@@ -313,13 +307,13 @@ jobs:
 **Best Practices:**
 
 - Add `src/data/usage-data.json` to `.gitignore` and fetch fresh data in CI. This keeps your repo clean and ensures data is always up-to-date.
-- Store your `INFA_API_KEY` in GitHub Secrets or your CI platform's secret management
-- The build-time approach means your API key is never exposed to end users
+- A CI runner has no browser to sign in with: set `INFA_ACCESS_TOKEN` (an access token from your Infa profile) as a secret and `INFA_BOARD_ID` as a variable. The CLI uses them instead of `.infa/config.yml`, and never refreshes or saves them
+- Nothing secret is written into the data file or reaches end users
 - Tag new components in Infa anytime, then rebuild to see them instantly in Storybook
 
 ## Understanding the Usage Panel
 
-When you configure a story with `mcComponentIds`, the Usage panel displays:
+For each component a story documents, the Usage panel displays:
 
 ### 1. Component Overview
 
@@ -412,9 +406,17 @@ The generated `src/data/usage-data.json` follows this structure:
         "page_id": null
       }
     ]
+  },
+  "_metadata": {
+    "lastSyncedAt": "2026-11-09T18:00:00.000Z",
+    "source": "infa-cli",
+    "boardId": "b_abc12345",
+    "stories": { "src/components/Button.stories.tsx": ["mc_abc12345"] }
   }
 }
 ```
+
+`infa storybook sync` also writes each component's `board_url` and `flows`, and each view's `is_default`, `preview_html_url` and `health` (see the types below).
 
 ### TypeScript Types
 
@@ -428,6 +430,10 @@ interface ComponentData {
   external_links: ExternalLink[];
   labels: Label[];
   component_views: ComponentView[];
+  // Written by `infa storybook sync`; absent otherwise
+  main_component_id?: string;
+  board_url?: string; // https://infa.ai/b/<board>/components/<mc_id>
+  flows?: { id: string; name: string; url: string; reasons?: string[] }[];
 }
 
 interface ComponentView {
@@ -438,6 +444,19 @@ interface ComponentView {
   code: string | null;
   is_domain_specific: boolean;
   page_id: string | null;
+  id?: string;
+  // Written by `infa storybook sync`; absent otherwise
+  is_default?: boolean;
+  preview_html_url?: string;
+  health?: { state: "verified" | "recovered" | "stale" | "broken" | "removed"; checkedAt?: string; reason?: string };
+}
+
+// The file's `_metadata` (not a component)
+interface UsageMetadata {
+  lastSyncedAt?: string;
+  source?: "infa-cli";
+  boardId?: string;
+  stories?: Record<string, string[]>; // story file (relative to where Storybook runs) → component ids
 }
 
 interface Label {
@@ -458,16 +477,9 @@ See `node_modules/storybook-infa-usage/dist/types.d.ts` for full definitions.
 
 ## Getting Infa Main Component IDs
 
-To connect your stories to Infa components, you need main component IDs:
+With `infa storybook sync` you usually need none: a component published with `infa publish` is linked to its story by the CLI. You need an id only for a component tagged in your product (no file in your repo). Ids look like `mc_abc12345` and are in:
 
-1. **Sign up for Infa Pro** at [infa.ai](https://infa.ai) ($20/month)
-2. **Tag components** in your products using the browser extension or dashboard
-3. **Get component IDs** - found in component detail pages or the browser extension
-4. **Format**: IDs typically look like `mc_abc12345`
-
-You can find component IDs in:
-
-- Component detail pages in Infa
+- The component's URL on the board (`https://infa.ai/b/<board>/components/mc_abc12345`)
 - Infa API responses
 - Browser extension when tagging components
 
@@ -553,7 +565,7 @@ Add the `usage` parameter to your story metadata:
 
 ```typescript
 interface UsageParameters {
-  mcComponentIds: string[];
+  mcComponentIds?: string[]; // optional when `infa storybook sync` links the story
 }
 ```
 
@@ -571,17 +583,17 @@ parameters: {
 
 ### Panel shows "No Usage Data"
 
-- Verify you've added the `usage` parameter to your story
-- Check that `mcComponentIds` is an array of strings
-- Ensure you've run `npx infa-usage-fetch` and restarted Storybook
+- Run `npx infa storybook sync` and read what it prints: each story with the components it found. A story it lists with none has no component on the board yet — publish one with `npx infa publish <Component.tsx>`, or name it in `mcComponentIds`
+- Restart Storybook after syncing
+- Run Storybook from the folder you ran the sync in: stories are matched by their path relative to it
 - Confirm `src/data/usage-data.json` exists and contains your component IDs (or set the addon's `dataFile` option)
 
 ### Component shows "Unknown Component"
 
 - The component ID exists in story parameters but not in `usage-data.json`
 - Check that the ID format is correct (e.g., `mc_abc12345`)
-- Run `npx infa-usage-fetch` to update the data file
-- Verify your Infa API key has access to these components
+- Run `npx infa storybook sync` to update the data file; it names every id it could not read and why
+- Check you are signed in as someone who can read that board (`npx infa auth status`)
 
 ### Data not updating
 
@@ -590,7 +602,12 @@ parameters: {
 - Check the browser console for any errors
 - Verify the data file is being bundled correctly (check Network tab)
 
-### Fetch fails with "Invalid API key or API key not found"
+### `infa storybook sync` says "Not authenticated" or "No board configured"
+
+- Run `npx infa auth`, then `npx infa board`, in your project's root.
+- In CI, set `INFA_ACCESS_TOKEN` and `INFA_BOARD_ID`.
+
+### `infa-usage-fetch` fails with "Invalid API key or API key not found"
 
 Infa received a key it does not recognise:
 
@@ -599,9 +616,9 @@ Infa received a key it does not recognise:
 - No spaces or line breaks around it. `infa-usage-fetch` trims them; your own code should too.
 - A deleted token stops working at once; generate a new one.
 
-### Fetch says some components were "Not returned"
+### `infa-usage-fetch` says some components were "Not returned"
 
-The token reads components on boards **its own account owns**. Check the `mc_…` id and that the token was made by the board's owner.
+The token reads components on boards **its own account owns**. Check the `mc_…` id and that the token was made by the board's owner — or switch to `npx infa storybook sync`, which reads as you and covers team boards.
 
 ### Empty Component Views
 

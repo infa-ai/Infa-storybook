@@ -9,7 +9,7 @@ const config = defineMain({
   stories: ["../src/**/*.mdx", "../src/**/*.stories.@(js|jsx|ts|tsx)"],
   addons: ["@storybook/addon-docs", "./local-preset.mjs"],
   framework: "@storybook/react-vite",
-  viteFinal: async (config, options) => {
+  viteFinal: async (config) => {
     // Watch dist folder for changes during development
     // This ensures Storybook reloads when the addon is rebuilt
     config.server = config.server || {};
