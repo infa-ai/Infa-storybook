@@ -1,3 +1,15 @@
+# v1.2.2 (Tue Nov 10 2026)
+
+#### 🐛 Bug Fix
+
+- Usage tab: usages grouped by screen, each from the browser or code [#10](https://github.com/infa-ai/Infa-storybook/pull/10) ([@desyniq](https://github.com/desyniq))
+
+#### Authors: 1
+
+- Desyniq ([@desyniq](https://github.com/desyniq))
+
+---
+
 # v1.2.1 (Tue Nov 10 2026)
 
 #### 🐛 Bug Fix
