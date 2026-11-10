@@ -1,3 +1,15 @@
+# v1.2.1 (Tue Nov 10 2026)
+
+#### 🐛 Bug Fix
+
+- docs(readme): what the Usage tab and the board look like [#9](https://github.com/infa-ai/Infa-storybook/pull/9) ([@desyniq](https://github.com/desyniq))
+
+#### Authors: 1
+
+- Desyniq ([@desyniq](https://github.com/desyniq))
+
+---
+
 # v1.2.0 (Tue Nov 10 2026)
 
 #### 🚀 Enhancement
