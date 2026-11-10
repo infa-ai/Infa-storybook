@@ -7,8 +7,8 @@
 
 import React, { memo, useState } from "react";
 import { AddonPanel } from "storybook/internal/components";
-import { useParameter } from "storybook/manager-api";
-import type { UsageParameters, UsageDataMap, ComponentData } from "../types";
+import { useParameter, useStorybookApi, useStorybookState } from "storybook/manager-api";
+import type { UsageParameters, UsageDataMap, ComponentData, UsageMetadata } from "../types";
 import { DATA_GLOBAL } from "../constants";
 
 // Sub-components
@@ -19,6 +19,7 @@ import { SyncModal } from "./Panel/SyncModal";
 
 // Styles
 import { PanelContent } from "./Panel/styles";
+import { boardComponentsUrl, sortViewsDefaultFirst, storyComponentIds } from "./Panel/utils";
 
 interface PanelProps {
   active: boolean;
@@ -29,17 +30,17 @@ interface PanelProps {
 // imported from this package's own src/data, which bundled the addon's demo
 // data into the published build: a project never saw its own components.
 let usageData: UsageDataMap = {};
-let lastSyncedAt: string | undefined;
+let metadata: UsageMetadata = {};
 const injected = (globalThis as Record<string, unknown>)[DATA_GLOBAL];
 if (injected && typeof injected === "object") {
   const { _metadata, ...rest } = injected as UsageDataMap & {
-    _metadata?: { lastSyncedAt?: string };
+    _metadata?: UsageMetadata;
   };
-  lastSyncedAt = _metadata?.lastSyncedAt;
+  metadata = _metadata ?? {};
   usageData = rest as UsageDataMap;
 } else {
   console.warn(
-    "[storybook-infa-usage] No usage data. Run `npx infa-usage-fetch`, then restart Storybook.",
+    "[storybook-infa-usage] No usage data. Run `npx infa storybook sync` (or `npx infa-usage-fetch`), then restart Storybook.",
   );
 }
 
@@ -63,9 +64,13 @@ export const Panel: React.FC<PanelProps> = memo(function UsagePanel(props) {
     Record<string, boolean>
   >({});
 
-  // Get mcComponentIds from story parameters
+  // The story's components: `parameters.usage.mcComponentIds` as written,
+  // plus what `infa storybook sync` mapped this story's file to.
   const params = useParameter<UsageParameters>("usage", { mcComponentIds: [] });
-  const mcComponentIds = params.mcComponentIds || [];
+  const api = useStorybookApi();
+  const { storyId, refId } = useStorybookState();
+  const entry = storyId ? (api.getData(storyId, refId) as { importPath?: string } | undefined) : undefined;
+  const mcComponentIds = storyComponentIds(params?.mcComponentIds, metadata.stories, entry?.importPath);
 
   const hasComponents = mcComponentIds.length > 0;
 
@@ -74,7 +79,11 @@ export const Panel: React.FC<PanelProps> = memo(function UsagePanel(props) {
     .map((id) => ({ id, data: usageData[id] }))
     .filter(
       (c): c is { id: string; data: ComponentData } => c.data !== undefined,
-    );
+    )
+    .map(({ id, data }) => ({
+      id,
+      data: { ...data, component_views: sortViewsDefaultFirst(data.component_views ?? []) },
+    }));
 
   // Extract board_id from first component that has one
   const boardId = components.find((c) => c.data.board_id)?.data.board_id;
@@ -95,15 +104,10 @@ export const Panel: React.FC<PanelProps> = memo(function UsagePanel(props) {
     }));
   };
 
-  // Handler for opening Infa board to tag components
+  // Opens the board's components, where views are added and tagged.
   const handleTagComponents = () => {
-    if (boardId) {
-      window.open(
-        `https://infa.ai/open?board=${boardId}`,
-        "_blank",
-        "noopener,noreferrer",
-      );
-    }
+    const url = boardComponentsUrl(boardId, components.find((c) => c.data.board_url)?.data.board_url);
+    if (url) window.open(url, "_blank", "noopener,noreferrer");
   };
 
   return (
@@ -123,7 +127,7 @@ export const Panel: React.FC<PanelProps> = memo(function UsagePanel(props) {
           <EmptyState />
         )}
         <Footer
-          lastSyncedAt={lastSyncedAt}
+          lastSyncedAt={metadata.lastSyncedAt}
           onSyncClick={() => setIsSyncModalOpen(true)}
         />
 

@@ -10,12 +10,12 @@ export const PanelContent = styled.div(({ theme }) => ({
   minHeight: "200px",
 }));
 
-export const ViewToggleContainer = styled.div(({ theme }) => ({
+export const ViewToggleContainer = styled.div({
   display: "flex",
   gap: "0.5rem",
   marginBottom: "1.5rem",
   alignItems: "center",
-}));
+});
 
 // Segmented control container for tab-like buttons
 export const SegmentedControl = styled.div(({ theme }) => ({
@@ -165,7 +165,7 @@ export const ExternalLink = styled.a(({ theme }) => ({
   },
 }));
 
-export const ExternalLinkIcon = styled.span(({ theme }) => ({
+export const ExternalLinkIcon = styled.span({
   width: "16px",
   height: "16px",
   display: "inline-flex",
@@ -173,7 +173,7 @@ export const ExternalLinkIcon = styled.span(({ theme }) => ({
   justifyContent: "center",
   fontSize: "12px",
   opacity: 0.7,
-}));
+});
 
 export const LabelsContainer = styled.div({
   display: "flex",
@@ -303,14 +303,14 @@ export const XPathArrowButton = styled.a(({ theme }) => ({
   },
 }));
 
-export const Screenshot = styled.img(({ theme }) => ({
+export const Screenshot = styled.img({
   width: "100%",
   maxHeight: "200px",
   objectFit: "cover",
   borderRadius: "4px",
   marginBottom: "0.75rem",
   display: "block",
-}));
+});
 
 export const CodeCapture = styled.pre(({ theme }) => ({
   margin: "0.75rem 0",
@@ -405,11 +405,11 @@ export const EmptyStateTitle = styled.h3(({ theme }) => ({
   color: theme.color.defaultText,
 }));
 
-export const EmptyStateText = styled.p(({ theme }) => ({
+export const EmptyStateText = styled.p({
   margin: "0.5rem 0",
   fontSize: "14px",
   lineHeight: 1.6,
-}));
+});
 
 export const CodeExample = styled.pre(({ theme }) => ({
   marginTop: "1rem",
@@ -432,11 +432,11 @@ export const DocsLink = styled.a(({ theme }) => ({
   },
 }));
 
-export const FooterWrapper = styled.div(({ theme }) => ({
+export const FooterWrapper = styled.div({
   marginTop: "2rem",
   paddingTop: "1rem",
   textAlign: "left",
-}));
+});
 
 export const SyncStatusContainer = styled.div({
   marginBottom: "1rem",
@@ -848,12 +848,12 @@ export const GroupByMenuItem = styled.button<{ active?: boolean }>(
 );
 
 // Group header styles for domain/page grouping
-export const GroupHeader = styled.div(({ theme }) => ({
+export const GroupHeader = styled.div({
   display: "flex",
   alignItems: "center",
   gap: "0.5rem",
   marginBottom: "0.5rem",
-}));
+});
 
 export const GroupHeaderButton = styled.button(({ theme }) => ({
   display: "flex",
@@ -940,3 +940,77 @@ export const PageInfoUrl = styled.div(({ theme }) => ({
   wordBreak: "break-all",
 }));
 
+
+// --- Board data from `infa storybook sync`: default view, health, live render, flows ---
+
+const TONES = {
+  positive: { fg: "#24a148", bg: "rgba(36, 161, 72, 0.12)" },
+  warning: { fg: "#b28600", bg: "rgba(241, 194, 27, 0.18)" },
+  negative: { fg: "#da1e28", bg: "rgba(218, 30, 40, 0.12)" },
+  neutral: { fg: "inherit", bg: "rgba(128, 128, 128, 0.14)" },
+} as const;
+
+export type ChipTone = keyof typeof TONES;
+
+export const ViewChipRow = styled.div({
+  display: "flex",
+  flexWrap: "wrap",
+  gap: "4px",
+  alignItems: "center",
+  marginTop: "4px",
+});
+
+export const ViewChip = styled.span<{ tone?: ChipTone }>(({ theme, tone = "neutral" }) => ({
+  display: "inline-flex",
+  alignItems: "center",
+  gap: "4px",
+  padding: "1px 6px",
+  borderRadius: "999px",
+  fontSize: theme.typography.size.s1,
+  fontWeight: theme.typography.weight.bold,
+  lineHeight: "16px",
+  color: TONES[tone].fg,
+  background: TONES[tone].bg,
+}));
+
+export const LiveToggle = styled.button<{ active?: boolean }>(({ theme, active }) => ({
+  border: `1px solid ${active ? theme.color.secondary : theme.appBorderColor}`,
+  background: active ? theme.color.secondary : "transparent",
+  color: active ? theme.color.lightest : theme.color.defaultText,
+  borderRadius: "999px",
+  padding: "1px 8px",
+  fontSize: theme.typography.size.s1,
+  cursor: "pointer",
+  lineHeight: "16px",
+}));
+
+export const LiveFrame = styled.iframe(({ theme }) => ({
+  width: "100%",
+  boxSizing: "border-box",
+  height: "240px",
+  border: `1px solid ${theme.appBorderColor}`,
+  borderRadius: theme.appBorderRadius,
+  background: theme.background.app,
+  display: "block",
+}));
+
+export const LiveNotice = styled.p(({ theme }) => ({
+  fontSize: theme.typography.size.s1,
+  color: theme.textMutedColor,
+  margin: "8px 0",
+}));
+
+export const FlowList = styled.ul({
+  listStyle: "none",
+  padding: 0,
+  margin: "0.5rem 0 0",
+  display: "flex",
+  flexWrap: "wrap",
+  gap: "6px",
+});
+
+export const FlowListLabel = styled.span(({ theme }) => ({
+  fontSize: theme.typography.size.s1,
+  color: theme.textMutedColor,
+  marginRight: "4px",
+}));

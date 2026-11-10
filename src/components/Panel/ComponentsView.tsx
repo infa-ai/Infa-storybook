@@ -5,7 +5,7 @@
 import React, { useState, useRef, useEffect, useMemo } from "react";
 import { PlusIcon, ChevronDownIcon, ChevronRightIcon } from "@storybook/icons";
 import { Badge } from "storybook/internal/components";
-import type { ComponentData, ComponentView } from "../../types";
+import type { ComponentData, ComponentView, Page } from "../../types";
 import { ComponentHeader } from "./ComponentHeader";
 import { ComponentViewCard } from "./ComponentViewCard";
 import { extractDomain, formatUrlForDisplay, matchUrlToPage } from "./utils";
@@ -148,12 +148,12 @@ export const ComponentsView: React.FC<ComponentsViewProps> = ({
     views: ComponentView[],
     groupType: "domains" | "pages",
     pages?: Array<{ id: string; data: ComponentData }>[0]["data"]["pages"],
-  ): Map<string, { views: ComponentView[]; page: any }> => {
-    const grouped = new Map<string, { views: ComponentView[]; page: any }>();
+  ): Map<string, { views: ComponentView[]; page: Page | null }> => {
+    const grouped = new Map<string, { views: ComponentView[]; page: Page | null }>();
 
     views.forEach((view) => {
       let key: string;
-      let page: any = null;
+      let page: Page | null = null;
 
       if (groupType === "domains") {
         key = extractDomain(view.url);
@@ -215,6 +215,8 @@ export const ComponentsView: React.FC<ComponentsViewProps> = ({
               description={data.description}
               labels={data.labels}
               externalLinks={data.external_links}
+              flows={data.flows}
+              boardUrl={data.board_url}
               isCollapsed={isCollapsed}
               onToggleCollapsed={() => onToggleCollapsed(id)}
             />
@@ -307,6 +309,8 @@ export const ComponentsView: React.FC<ComponentsViewProps> = ({
                           key={idx}
                           view={view}
                           boardId={data.board_id}
+                          componentId={id}
+                          boardUrl={data.board_url}
                         />
                       ))}
                     </ComponentViewsGrid>
@@ -326,6 +330,8 @@ export const ComponentsView: React.FC<ComponentsViewProps> = ({
                                 key={idx}
                                 view={view}
                                 boardId={data.board_id}
+                                componentId={id}
+                                boardUrl={data.board_url}
                               />
                             ))}
                           </ComponentViewsGrid>
@@ -438,6 +444,8 @@ export const ComponentsView: React.FC<ComponentsViewProps> = ({
                                           key={`${groupId}-${idx}`}
                                           view={view}
                                           boardId={data.board_id}
+                                          componentId={id}
+                                          boardUrl={data.board_url}
                                         />
                                       ))}
                                     </ComponentViewsGrid>

@@ -2,7 +2,7 @@
  * Utility functions for Panel component
  */
 
-import type { ComponentData, ComponentView, Page } from "../../types";
+import type { ComponentView, Page, ViewHealthState } from "../../types";
 
 /**
  * Extracts domain from a URL
@@ -47,7 +47,7 @@ export const extractInfaIds = (
   try {
     // Extract board_id from path: /public_screenshots/{board_id}/
     const boardIdMatch = screenshotUrl.match(
-      /\/public_screenshots\/([^\/]+)\//,
+      /\/public_screenshots\/([^/]+)\//,
     );
     const boardId = (boardIdMatch?.[1] || null) as string | null;
 
@@ -61,29 +61,105 @@ export const extractInfaIds = (
   }
 };
 
+const INFA_ORIGIN = "https://infa.ai";
+
 /**
- * Generates Infa link if IDs are available, otherwise returns original URL
+ * The component's page on the board: `https://infa.ai/b/{board}/components/{mc}`.
+ * Null without both ids.
+ *
+ * @param boardId - The board (`b_…`).
+ * @param componentId - The component (`mc_…`).
+ * @param origin - The app's origin (a local or preview app); infa.ai by default.
+ */
+export const componentPageUrl = (
+  boardId: string | null | undefined,
+  componentId: string | null | undefined,
+  origin: string = INFA_ORIGIN,
+): string | null =>
+  boardId && componentId
+    ? `${origin}/b/${encodeURIComponent(boardId)}/components/${encodeURIComponent(componentId)}`
+    : null;
+
+/** The origin of an absolute URL, else infa.ai. */
+export const originOf = (url: string | null | undefined): string => {
+  try {
+    if (url) return new URL(url).origin;
+  } catch {
+    /* not a URL */
+  }
+  return INFA_ORIGIN;
+};
+
+/**
+ * Where a view's "open" arrow goes: the component's page on the board when
+ * the ids are known (it lists every view, its health and flows), else the
+ * page the view was captured on.
+ *
+ * @param view - The view.
+ * @param boardId - Its board, from the data or its screenshot's path.
+ * @param componentId - Its component.
+ * @param boardUrl - The component's page as the sync wrote it, if it did.
  */
 export const generateInfaLink = (
   view: ComponentView,
   boardId: string | null,
-  componentViewId: string | null,
-): string => {
-  const infaLink = boardId && componentViewId
-    ? `https://infa.ai/open?board=${boardId}&componentView=${componentViewId}`
-    : view.url;
+  componentId: string | null,
+  boardUrl?: string | null,
+): string => boardUrl || componentPageUrl(boardId, componentId) || view.url;
 
-  // Log for verification
-  console.log(`[Infa Link Generation]`, {
-    title: view.title,
-    boardId,
-    componentViewId,
-    hasScreenshot: !!view.screenshot,
-    generatedLink: infaLink,
-    isInfaLink: infaLink.startsWith('https://infa.ai/open')
-  });
+/** The board's components index, for "Tag More Components". */
+export const boardComponentsUrl = (
+  boardId: string | null | undefined,
+  someBoardUrl?: string | null,
+): string | null =>
+  boardId ? `${originOf(someBoardUrl)}/b/${encodeURIComponent(boardId)}/components` : null;
 
-  return infaLink;
+/**
+ * Story file paths as Storybook and the sync write them, compared without a
+ * leading `./` and with forward slashes.
+ */
+export const normalizeStoryPath = (p: string): string =>
+  p.replace(/\\/g, "/").replace(/^\.\//, "");
+
+/**
+ * The components a story documents: `mcComponentIds` as written, then what
+ * `infa storybook sync` mapped the story's file to (its `_metadata.stories`,
+ * keyed by the file's path relative to where Storybook runs).
+ *
+ * @param mcComponentIds - From `parameters.usage`.
+ * @param stories - `_metadata.stories` of the data file.
+ * @param importPath - The current story's `importPath`.
+ */
+export const storyComponentIds = (
+  mcComponentIds: string[] | undefined,
+  stories: Record<string, string[]> | undefined,
+  importPath: string | undefined,
+): string[] => {
+  const ids = [...(mcComponentIds ?? [])];
+  if (stories && importPath) {
+    const wanted = normalizeStoryPath(importPath);
+    for (const [key, mapped] of Object.entries(stories)) {
+      if (normalizeStoryPath(key) !== wanted) continue;
+      for (const id of mapped) if (!ids.includes(id)) ids.push(id);
+    }
+  }
+  return ids;
+};
+
+/** The default view first; otherwise the order the data has. */
+export const sortViewsDefaultFirst = (views: ComponentView[]): ComponentView[] =>
+  views
+    .map((view, index) => ({ view, index }))
+    .sort((a, b) => Number(Boolean(b.view.is_default)) - Number(Boolean(a.view.is_default)) || a.index - b.index)
+    .map(({ view }) => view);
+
+/** How the board says each element-health state, and the colour it wears. */
+export const HEALTH_COPY: Record<ViewHealthState, { label: string; tone: "positive" | "warning" | "negative" | "neutral" }> = {
+  verified: { label: "Verified", tone: "positive" },
+  recovered: { label: "Recovered", tone: "positive" },
+  stale: { label: "Stale", tone: "warning" },
+  broken: { label: "Broken", tone: "negative" },
+  removed: { label: "Removed", tone: "negative" },
 };
 
 /**

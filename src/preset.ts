@@ -29,7 +29,7 @@ export function resolveDataFile(options: UsageAddonOptions = {}, cwd = process.c
 export function readUsageData(file: string): unknown {
   if (!existsSync(file)) {
     console.warn(
-      `[storybook-infa-usage] No usage data at ${file}. Run \`npx infa-usage-fetch\` to create it.`,
+      `[storybook-infa-usage] No usage data at ${file}. Run \`npx infa storybook sync\` (or \`npx infa-usage-fetch\`) to create it.`,
     );
     return null;
   }
