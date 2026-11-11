@@ -183,9 +183,309 @@
         "url_pattern": "https://github.com/marketplace",
         "component_view_count": 0
       }
-    ]
+    ],
+    "code_usages": {
+      "file": "src/stories/Button.tsx",
+      "exportName": "Button",
+      "total": 8,
+      "files": 6,
+      "sites": [
+        {
+          "file": "src/app/new/NewRepoForm.tsx",
+          "root": 1,
+          "line": 88,
+          "column": 9,
+          "kind": "jsx",
+          "element": "<Button primary label=\"Create repository\" type=\"submit\" />",
+          "within": "NewRepoForm",
+          "props": [
+            {
+              "name": "primary",
+              "value": "true"
+            },
+            {
+              "name": "label",
+              "value": "Create repository"
+            },
+            {
+              "name": "type",
+              "value": "submit"
+            }
+          ],
+          "routes": [
+            {
+              "path": "/new",
+              "kind": "page",
+              "file": "src/app/new/page.tsx",
+              "root": 1,
+              "screenId": "p_qyXZIyBp",
+              "via": []
+            }
+          ]
+        },
+        {
+          "file": "src/app/new/page.tsx",
+          "root": 1,
+          "line": 21,
+          "column": 7,
+          "kind": "jsx",
+          "element": "<Button size=\"small\" label=\"Import a repository\" />",
+          "within": "NewRepoPage",
+          "props": [
+            {
+              "name": "size",
+              "value": "small"
+            },
+            {
+              "name": "label",
+              "value": "Import a repository"
+            }
+          ],
+          "routes": [
+            {
+              "path": "/new",
+              "kind": "page",
+              "file": "src/app/new/page.tsx",
+              "root": 1,
+              "screenId": "p_qyXZIyBp",
+              "via": []
+            }
+          ]
+        },
+        {
+          "file": "src/features/search/Filters.tsx",
+          "root": 1,
+          "line": 34,
+          "column": 11,
+          "kind": "jsx",
+          "element": "<Button size=\"small\" label=\"Clear filters\" onClick={reset} />",
+          "within": "SearchFilters",
+          "props": [
+            {
+              "name": "size",
+              "value": "small"
+            },
+            {
+              "name": "label",
+              "value": "Clear filters"
+            },
+            {
+              "name": "onClick"
+            }
+          ],
+          "routes": [
+            {
+              "path": "/search",
+              "kind": "page",
+              "file": "src/app/search/page.tsx",
+              "root": 1,
+              "screenId": "p_Pr0Bxl0e",
+              "via": [
+                "src/features/search/SearchResults.tsx"
+              ]
+            }
+          ]
+        },
+        {
+          "file": "src/components/RepoActions.tsx",
+          "root": 1,
+          "line": 12,
+          "column": 5,
+          "kind": "jsx",
+          "element": "<PrimaryButton label=\"Star\" />",
+          "within": "RepoActions",
+          "through": "PrimaryButton",
+          "props": [
+            {
+              "name": "label",
+              "value": "Star"
+            }
+          ],
+          "routes": [
+            {
+              "path": "/{owner}/{repo}/*",
+              "kind": "layout",
+              "file": "src/app/[owner]/[repo]/layout.tsx",
+              "root": 1,
+              "screenId": null,
+              "via": []
+            }
+          ],
+          "moreRoutes": 0
+        },
+        {
+          "file": "src/components/ConfirmDialog.tsx",
+          "root": 1,
+          "line": 3,
+          "column": 7,
+          "kind": "lazy",
+          "element": "LazyButton = lazy(() => import(\"@acme/ui/Button\"))",
+          "within": null,
+          "props": [],
+          "routes": []
+        },
+        {
+          "file": "src/stories/Header.tsx",
+          "root": 0,
+          "line": 45,
+          "column": 13,
+          "kind": "jsx",
+          "element": "<Button size=\"small\" onClick={onLogout} label=\"Log out\" />",
+          "within": "Header",
+          "props": [
+            {
+              "name": "size",
+              "value": "small"
+            },
+            {
+              "name": "onClick"
+            },
+            {
+              "name": "label",
+              "value": "Log out"
+            }
+          ],
+          "routes": []
+        },
+        {
+          "file": "src/stories/Header.tsx",
+          "root": 0,
+          "line": 49,
+          "column": 13,
+          "kind": "jsx",
+          "element": "<Button size=\"small\" onClick={onLogin} label=\"Log in\" />",
+          "within": "Header",
+          "props": [
+            {
+              "name": "size",
+              "value": "small"
+            },
+            {
+              "name": "onClick"
+            },
+            {
+              "name": "label",
+              "value": "Log in"
+            }
+          ],
+          "routes": []
+        },
+        {
+          "file": "src/stories/Header.tsx",
+          "root": 0,
+          "line": 50,
+          "column": 13,
+          "kind": "jsx",
+          "element": "<Button primary size=\"small\" onClick={onCreateAccount} label=\"Sign up\" />",
+          "within": "Header",
+          "props": [
+            {
+              "name": "primary",
+              "value": "true"
+            },
+            {
+              "name": "size",
+              "value": "small"
+            },
+            {
+              "name": "onClick"
+            },
+            {
+              "name": "label",
+              "value": "Sign up"
+            }
+          ],
+          "routes": []
+        }
+      ],
+      "props": [
+        {
+          "name": "label",
+          "uses": 7,
+          "values": [
+            {
+              "value": "Clear filters",
+              "count": 1
+            },
+            {
+              "value": "Create repository",
+              "count": 1
+            },
+            {
+              "value": "Import a repository",
+              "count": 1
+            },
+            {
+              "value": "Log in",
+              "count": 1
+            },
+            {
+              "value": "Log out",
+              "count": 1
+            },
+            {
+              "value": "Sign up",
+              "count": 1
+            },
+            {
+              "value": "Star",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "name": "size",
+          "uses": 5,
+          "values": [
+            {
+              "value": "small",
+              "count": 5
+            }
+          ]
+        },
+        {
+          "name": "onClick",
+          "uses": 4,
+          "values": []
+        },
+        {
+          "name": "primary",
+          "uses": 2,
+          "values": [
+            {
+              "value": "true",
+              "count": 2
+            }
+          ]
+        },
+        {
+          "name": "type",
+          "uses": 1,
+          "values": [
+            {
+              "value": "submit",
+              "count": 1
+            }
+          ]
+        }
+      ]
+    }
   },
   "_metadata": {
-    "lastSyncedAt": "2025-12-04T01:30:58.077Z"
+    "lastSyncedAt": "2025-12-04T01:30:58.077Z",
+    "codeRoots": [
+      {
+        "name": ".",
+        "repository": {
+          "url": "https://github.com/infa-ai/Infa-storybook",
+          "branch": "main"
+        }
+      },
+      {
+        "name": "shop",
+        "repository": null
+      }
+    ],
+    "codeScannedAt": "2026-11-11T04:30:00.000Z"
   }
 }

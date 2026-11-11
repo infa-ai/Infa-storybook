@@ -21,6 +21,11 @@
  * Pure: no Storybook import, so it runs in tests and in the manager alike.
  */
 import type {
+  CallSiteKind,
+  CodeCallSite,
+  CodeRoot,
+  CodeRoute,
+  CodeUsages,
   ComponentData,
   ComponentView,
   Screen,
@@ -206,7 +211,105 @@ export function normalizeComponent(value: unknown): ComponentData {
     return [{ id, name: str(f.name) ?? "Untitled flow", url, ...(reasons ? { reasons } : {}) }];
   });
   if (flows.length > 0) component.flows = flows;
+  const code = normalizeCodeUsages(raw.code_usages);
+  if (code) component.code_usages = code;
   return component;
+}
+
+const CALL_SITE_KINDS = new Set<CallSiteKind>(["jsx", "wrapper", "lazy", "reference"]);
+
+function num(value: unknown, fallback = 0): number {
+  return typeof value === "number" && Number.isFinite(value) ? value : fallback;
+}
+
+function readRoute(value: unknown): CodeRoute | null {
+  const raw = asRecord(value);
+  const path = str(raw.path);
+  const file = str(raw.file);
+  if (!path || !file) return null;
+  return {
+    path,
+    kind: raw.kind === "layout" ? "layout" : "page",
+    file,
+    root: num(raw.root),
+    screenId: str(raw.screenId),
+    via: Array.isArray(raw.via) ? raw.via.filter((v): v is string => typeof v === "string") : [],
+  };
+}
+
+function readCallSite(value: unknown): CodeCallSite | null {
+  const raw = asRecord(value);
+  const file = str(raw.file);
+  const line = num(raw.line);
+  if (!file || line < 1) return null;
+  const kind = CALL_SITE_KINDS.has(raw.kind as CallSiteKind) ? (raw.kind as CallSiteKind) : "jsx";
+  const site: CodeCallSite = {
+    file,
+    root: num(raw.root),
+    line,
+    column: num(raw.column, 1),
+    kind,
+    element: str(raw.element) ?? "",
+    within: str(raw.within),
+    props: asArray(raw.props).flatMap((p) => {
+      const name = str(p.name);
+      if (!name) return [];
+      return [typeof p.value === "string" ? { name, value: p.value } : { name }];
+    }),
+    routes: asArray(raw.routes).flatMap((r) => {
+      const route = readRoute(r);
+      return route ? [route] : [];
+    }),
+  };
+  const through = str(raw.through);
+  if (through) site.through = through;
+  const more = num(raw.moreRoutes);
+  if (more > 0) site.moreRoutes = more;
+  return site;
+}
+
+/**
+ * A component's `code_usages` (`infa storybook sync`), or undefined when the
+ * file has none. Sites without a file and a line are dropped.
+ *
+ * @param value - The component's `code_usages`.
+ */
+export function normalizeCodeUsages(value: unknown): CodeUsages | undefined {
+  if (!value || typeof value !== "object") return undefined;
+  const raw = asRecord(value);
+  const sites = asArray(raw.sites).flatMap((s) => {
+    const site = readCallSite(s);
+    return site ? [site] : [];
+  });
+  return {
+    file: str(raw.file) ?? "",
+    exportName: str(raw.exportName),
+    total: Math.max(num(raw.total, sites.length), sites.length),
+    files: num(raw.files, new Set(sites.map((s) => `${s.root}:${s.file}`)).size),
+    sites,
+    props: asArray(raw.props).flatMap((p) => {
+      const name = str(p.name);
+      if (!name) return [];
+      return [
+        {
+          name,
+          uses: num(p.uses),
+          values: asArray(p.values).flatMap((v) => (typeof v.value === "string" ? [{ value: v.value, count: num(v.count) }] : [])),
+        },
+      ];
+    }),
+  };
+}
+
+function readCodeRoots(value: unknown): CodeRoot[] | undefined {
+  if (!Array.isArray(value)) return undefined;
+  return value.map((v) => {
+    const raw = asRecord(v);
+    const repo = asRecord(raw.repository);
+    const url = str(repo.url);
+    const branch = str(repo.branch);
+    return { name: str(raw.name) ?? ".", repository: url && branch ? { url, branch } : null };
+  });
 }
 
 /**
@@ -222,5 +325,9 @@ export function normalizeUsageData(value: unknown): { components: UsageDataMap; 
     if (id === "_metadata" || !entry || typeof entry !== "object") continue;
     components[id] = normalizeComponent(entry);
   }
-  return { components, metadata: asRecord(raw._metadata) as UsageMetadata };
+  const metadata = { ...asRecord(raw._metadata) } as UsageMetadata;
+  const codeRoots = readCodeRoots(asRecord(raw._metadata).codeRoots);
+  if (codeRoots) metadata.codeRoots = codeRoots;
+  else delete metadata.codeRoots;
+  return { components, metadata };
 }

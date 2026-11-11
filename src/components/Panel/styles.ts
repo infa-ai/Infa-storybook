@@ -1080,3 +1080,63 @@ export const NoUsagesText = styled.p({
   fontSize: "13px",
   lineHeight: 1.5,
 });
+
+// --- Code usages: every place the code renders the component ---
+
+export const CodeSummary = styled.p(({ theme }) => ({
+  margin: "0.25rem 0",
+  fontSize: "12px",
+  lineHeight: 1.5,
+  color: theme.textMutedColor,
+}));
+
+export const CallSiteList = styled.ul({
+  listStyle: "none",
+  margin: 0,
+  padding: 0,
+  display: "flex",
+  flexDirection: "column",
+  gap: "6px",
+});
+
+export const CallSiteRow = styled.li(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  gap: "2px",
+  padding: "8px 10px",
+  borderRadius: "6px",
+  border: `1px solid ${theme.appBorderColor}`,
+  background: theme.background.content,
+  minWidth: 0,
+}));
+
+export const CallSiteFile = styled.div(({ theme }) => ({
+  fontFamily: "monospace",
+  fontSize: "12px",
+  fontWeight: 600,
+  color: theme.color.defaultText,
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+  whiteSpace: "nowrap",
+  "& a": { color: "inherit", textDecoration: "none" },
+  "& a:hover": { color: theme.color.secondary, textDecoration: "underline" },
+}));
+
+export const CallSiteElement = styled.code(({ theme }) => ({
+  fontFamily: "monospace",
+  fontSize: "12px",
+  color: theme.color.mediumdark,
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+  whiteSpace: "nowrap",
+  minWidth: 0,
+}));
+
+export const CallSiteMeta = styled.div(({ theme }) => ({
+  display: "flex",
+  flexWrap: "wrap",
+  alignItems: "center",
+  gap: "8px",
+  fontSize: "11px",
+  color: theme.textMutedColor,
+}));

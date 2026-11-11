@@ -10,7 +10,8 @@
 import React, { useState, useRef, useEffect, useMemo } from "react";
 import { PlusIcon, ChevronDownIcon, ChevronRightIcon } from "@storybook/icons";
 import { Badge } from "storybook/internal/components";
-import type { ComponentData, ComponentView } from "../../types";
+import type { CodeRoot, ComponentData, ComponentView } from "../../types";
+import { CodeUsagesSection } from "./CodeUsagesSection";
 import { ComponentHeader } from "./ComponentHeader";
 import { ComponentViewCard } from "./ComponentViewCard";
 import {
@@ -69,10 +70,12 @@ interface ComponentsViewProps {
   onToggleCollapsed: (componentId: string) => void;
   boardId?: string;
   onTagComponents: () => void;
+  /** `_metadata.codeRoots`: where each call site's file links to. */
+  codeRoots?: CodeRoot[];
 }
 
 /** What a component with no usages shows: where to add them. */
-const NoUsages: React.FC<{ componentUrl: string | null }> = ({ componentUrl }) => (
+const NoUsages: React.FC<{ componentUrl: string | null; codeRead: boolean }> = ({ componentUrl, codeRead }) => (
   <NoUsagesWrapper data-testid="infa-usage-no-usages">
     <NoUsagesTitle>No usages yet</NoUsagesTitle>
     <NoUsagesText>
@@ -80,6 +83,12 @@ const NoUsages: React.FC<{ componentUrl: string | null }> = ({ componentUrl }) =
       from the browser with the Infa Chrome extension, or from code with the
       Infa CLI or the Claude plugin, then sync again.
     </NoUsagesText>
+    {codeRead && (
+      <NoUsagesText data-testid="infa-usage-no-usages-code">
+        The code was read too: nothing in this repo renders it. A design system used by other repos: sync with{" "}
+        <code>--in ../app</code>.
+      </NoUsagesText>
+    )}
     {componentUrl && (
       <NoUsagesText>
         <DocsLink
@@ -103,6 +112,7 @@ export const ComponentsView: React.FC<ComponentsViewProps> = ({
   onToggleCollapsed,
   boardId,
   onTagComponents,
+  codeRoots,
 }) => {
   const [groupBy, setGroupBy] = useState<GroupByOption>("screens");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -264,7 +274,9 @@ export const ComponentsView: React.FC<ComponentsViewProps> = ({
               onToggleCollapsed={() => onToggleCollapsed(id)}
             />
 
-            {!isCollapsed && views.length === 0 && <NoUsages componentUrl={componentUrl} />}
+            {!isCollapsed && views.length === 0 && !(data.code_usages && data.code_usages.total > 0) && (
+              <NoUsages componentUrl={componentUrl} codeRead={Boolean(data.code_usages)} />
+            )}
 
             {!isCollapsed && views.length > 0 && (
               <>
@@ -348,6 +360,17 @@ export const ComponentsView: React.FC<ComponentsViewProps> = ({
                   </ViewMoreButton>
                 )}
               </>
+            )}
+
+            {!isCollapsed && data.code_usages && data.code_usages.total > 0 && (
+              <CodeUsagesSection
+                code={data.code_usages}
+                screens={data.screens}
+                roots={codeRoots}
+                boardId={data.board_id ?? boardId}
+                boardUrl={data.board_url}
+                componentTitle={data.title}
+              />
             )}
           </ComponentSection>
         );

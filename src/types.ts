@@ -95,6 +95,68 @@ export interface ComponentData {
   board_url?: string;
   /** Flows that use the component (`infa storybook sync`). */
   flows?: UsageFlow[];
+  /** Every place the code renders it, read from the repo by `infa storybook sync` (no tagging). */
+  code_usages?: CodeUsages;
+}
+
+/** How a call site uses the component. */
+export type CallSiteKind = "jsx" | "wrapper" | "lazy" | "reference";
+
+/** A route a call site's file is rendered by, and the board screen it is when one matches. */
+export interface CodeRoute {
+  /** URL pattern (`/checkout/{id}`); a layout's ends in `/*`. */
+  path: string;
+  kind: "page" | "layout";
+  /** The file the route is declared by, relative to its root. */
+  file: string;
+  root: number;
+  screenId: string | null;
+  /** Files between the call site's and the route's, nearest first. */
+  via: string[];
+}
+
+/** One place the code renders the component. */
+export interface CodeCallSite {
+  /** Path relative to its root (`_metadata.codeRoots[root]`). */
+  file: string;
+  root: number;
+  line: number;
+  column: number;
+  kind: CallSiteKind;
+  /** The element as written, at most 160 characters. */
+  element: string;
+  /** The component the use sits in. */
+  within: string | null;
+  /** A same-file wrapper it goes through (`PrimaryButton = styled(Button)`). */
+  through?: string;
+  props: Array<{ name: string; value?: string }>;
+  routes: CodeRoute[];
+  moreRoutes?: number;
+}
+
+/** How a prop is passed across the call sites. */
+export interface PropUse {
+  name: string;
+  uses: number;
+  values: Array<{ value: string; count: number }>;
+}
+
+/** Where the code renders a component. */
+export interface CodeUsages {
+  /** The component's file. */
+  file: string;
+  exportName: string | null;
+  /** Call sites found; `sites` may hold fewer. */
+  total: number;
+  files: number;
+  sites: CodeCallSite[];
+  props: PropUse[];
+}
+
+/** A folder the code usages were read from, and where its files link to. */
+export interface CodeRoot {
+  name: string;
+  repository: { url: string; branch: string } | null;
 }
 
 /** `_metadata` of the data file. */
@@ -105,6 +167,9 @@ export interface UsageMetadata {
   boardId?: string;
   /** Story file (relative to where Storybook runs) → the components it documents. */
   stories?: Record<string, string[]>;
+  /** The folders code usages were read from; a call site's `root` indexes this. */
+  codeRoots?: CodeRoot[];
+  codeScannedAt?: string;
 }
 
 export type UsageDataMap = Record<string, ComponentData>;
