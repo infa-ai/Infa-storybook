@@ -1140,3 +1140,36 @@ export const CallSiteMeta = styled.div(({ theme }) => ({
   fontSize: "11px",
   color: theme.textMutedColor,
 }));
+
+export const CommandRow = styled.div(({ theme }) => ({
+  display: "inline-flex",
+  alignItems: "center",
+  gap: "8px",
+  maxWidth: "100%",
+  margin: "4px 0",
+  padding: "4px 4px 4px 10px",
+  borderRadius: "6px",
+  border: `1px solid ${theme.appBorderColor}`,
+  background: theme.background.bar,
+}));
+
+export const CommandCode = styled.code(({ theme }) => ({
+  fontFamily: "monospace",
+  fontSize: "12px",
+  color: theme.color.defaultText,
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+  whiteSpace: "nowrap",
+  minWidth: 0,
+}));
+
+export const CommandCopyButton = styled.button(({ theme }) => ({
+  flexShrink: 0,
+  border: `1px solid ${theme.appBorderColor}`,
+  background: theme.background.content,
+  color: theme.color.defaultText,
+  borderRadius: "4px",
+  padding: "2px 8px",
+  fontSize: "11px",
+  cursor: "pointer",
+}));

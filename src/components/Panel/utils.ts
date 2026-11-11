@@ -363,3 +363,18 @@ export const CALL_SITE_KIND_COPY: Record<CodeCallSite["kind"], string | null> = 
   lazy: "Lazy import",
   reference: "Passed on",
 };
+
+/** The command that writes the Usage tab's data, code usages included. */
+export const SYNC_COMMAND = "npx infa storybook sync";
+
+/**
+ * The terminal command that lists a component's call sites (`infa usages`):
+ * by its export when the sync named one, else by its title.
+ *
+ * @param exportName - The export the sync looked for (`Button`, `default`), if any.
+ * @param title - The component's title.
+ */
+export const usagesCommand = (exportName: string | null | undefined, title: string): string => {
+  const name = exportName && exportName !== "default" ? exportName : title.replace(/\s+/g, "");
+  return `npx infa usages ${/^[A-Za-z_$][\w$]*$/.test(name) ? name : JSON.stringify(name)}`;
+};

@@ -11,6 +11,8 @@ import {
   describePropUses,
   groupCallSites,
   NO_ROUTE_KEY,
+  SYNC_COMMAND,
+  usagesCommand,
 } from "../src/components/Panel/utils";
 import type { CodeCallSite, CodeRoot, Screen } from "../src/types";
 
@@ -136,5 +138,14 @@ describe("links and labels", () => {
     const label = { name: "label", uses: 6, values: ["a", "b", "c", "d", "e", "f"].map((value) => ({ value, count: 1 })) };
     expect(describePropUses([label])).toEqual(["label ×6"]);
     expect(describePropUses([{ ...label, values: label.values.slice(0, 4), uses: 4 }])).toEqual(["label: a ×1, b ×1, c ×1, d ×1"]);
+  });
+});
+
+describe("commands", () => {
+  it("names what fills the section, and the terminal command for one component", () => {
+    expect(SYNC_COMMAND).toBe("npx infa storybook sync");
+    expect(usagesCommand("Button", "Button")).toBe("npx infa usages Button");
+    expect(usagesCommand("default", "Date Picker")).toBe("npx infa usages DatePicker");
+    expect(usagesCommand(null, "Card / Media")).toBe('npx infa usages "Card/Media"');
   });
 });

@@ -20,7 +20,10 @@ import {
   describePropUses,
   groupCallSites,
   screenPageUrl,
+  SYNC_COMMAND,
+  usagesCommand,
 } from "./utils";
+import { CommandLine } from "./CommandLine";
 import {
   CallSiteElement,
   CallSiteFile,
@@ -62,7 +65,7 @@ export const CodeUsagesSection: React.FC<CodeUsagesSectionProps> = ({
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
   const groups = groupCallSites(code.sites, screens);
   const props = describePropUses(code.props);
-  const command = `npx infa usages ${code.exportName && code.exportName !== "default" ? code.exportName : componentTitle}`;
+  const command = usagesCommand(code.exportName, componentTitle);
 
   return (
     <div data-testid="infa-usage-code" style={{ marginTop: "1.5rem" }}>
@@ -73,7 +76,7 @@ export const CodeUsagesSection: React.FC<CodeUsagesSectionProps> = ({
       </SectionTitleRow>
       <CodeSummary data-testid="infa-usage-code-summary">
         {code.total === 0
-          ? "Nothing in the code renders it."
+          ? "Nothing in this repo renders it. A design system used by other repos: add their folders with --in ../app."
           : `${code.total} call site${code.total === 1 ? "" : "s"} in ${code.files} file${code.files === 1 ? "" : "s"}, read from the code: nothing to tag.`}
         {code.total > code.sites.length && ` Showing ${code.sites.length}; \`${command}\` lists all.`}
       </CodeSummary>
@@ -176,6 +179,32 @@ export const CodeUsagesSection: React.FC<CodeUsagesSectionProps> = ({
           </div>
         );
       })}
+
+      <CodeSummary style={{ marginTop: "1rem" }}>Refreshed each time you sync (restart Storybook after):</CodeSummary>
+      <CommandLine command={SYNC_COMMAND} data-testid="infa-usage-code-sync-command" />
+      <CodeSummary>The same list in your terminal:</CodeSummary>
+      <CommandLine command={command} data-testid="infa-usage-code-usages-command" />
     </div>
   );
 };
+
+/**
+ * What a component shows when its data has no code usages yet (synced by
+ * an older CLI, or by the PAT script): what the section is and the command
+ * that fills it.
+ */
+export const CodeUsagesHint: React.FC<{ componentTitle: string }> = ({ componentTitle }) => (
+  <div data-testid="infa-usage-code-hint" style={{ marginTop: "1.5rem" }}>
+    <SectionTitleRow>
+      <SectionTitle>In code</SectionTitle>
+    </SectionTitleRow>
+    <CodeSummary>
+      See every place your code renders {componentTitle} (file and line, props, the page it is on), read from the
+      repo with nothing to tag. Run this where Storybook runs, then restart Storybook:
+    </CodeSummary>
+    <CommandLine command={SYNC_COMMAND} data-testid="infa-usage-code-hint-command" />
+    <CodeSummary>
+      Your components are used in other repos? Add them: <code>{SYNC_COMMAND} --in ../app</code>
+    </CodeSummary>
+  </div>
+);

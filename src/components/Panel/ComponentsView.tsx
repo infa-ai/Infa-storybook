@@ -11,7 +11,7 @@ import React, { useState, useRef, useEffect, useMemo } from "react";
 import { PlusIcon, ChevronDownIcon, ChevronRightIcon } from "@storybook/icons";
 import { Badge } from "storybook/internal/components";
 import type { CodeRoot, ComponentData, ComponentView } from "../../types";
-import { CodeUsagesSection } from "./CodeUsagesSection";
+import { CodeUsagesHint, CodeUsagesSection } from "./CodeUsagesSection";
 import { ComponentHeader } from "./ComponentHeader";
 import { ComponentViewCard } from "./ComponentViewCard";
 import {
@@ -362,7 +362,9 @@ export const ComponentsView: React.FC<ComponentsViewProps> = ({
               </>
             )}
 
-            {!isCollapsed && data.code_usages && data.code_usages.total > 0 && (
+            {!isCollapsed && !data.code_usages && <CodeUsagesHint componentTitle={data.title} />}
+
+            {!isCollapsed && data.code_usages && (data.code_usages.total > 0 || views.length > 0) && (
               <CodeUsagesSection
                 code={data.code_usages}
                 screens={data.screens}
