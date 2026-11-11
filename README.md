@@ -10,6 +10,8 @@ A Storybook addon that connects your component documentation with real-world pro
 
 **In Storybook:** the Usage tab of a story shows the component as your Infa board knows it: its label and description, the flows that use it, and its **usages** — each place in your product where it is used, grouped by the screen it is on — with a screenshot, whether it was found in the **Browser** (the Chrome extension) or in **Code** (the Infa CLI), where exactly (the page, or the file), whether it is the default view, and whether it is still found there (**Verified**) or has drifted (**Stale**). **Open in Infa** goes to the component on the board.
 
+Under them, **In code** lists every place your code renders the component, read from the repo with nothing to tag: each call site's file and line (linked to it on GitHub or GitLab), the element as written and the component it sits in, grouped by the board screen its route is (else the route, else "Not on a route"), with how its props are passed (`variant: primary ×8, danger ×3`).
+
 ![The Usage tab of a PromoChip story: the component's label and description, "Used in" two flows, and two captured views marked Default and Verified, and Stale](https://lchwovxxbgcdycaqmftj.supabase.co/storage/v1/object/public/screenshots/readme/01-storybook-usage-tab.png)
 
 **In Infa:** the same component on its board page: its views with the same status, and the flows and screens it is related to.
@@ -145,7 +147,9 @@ It finds your `*.stories.*` files, works out the board component each one docume
 └  Wrote 2 component(s) to src/data/usage-data.json. Restart Storybook to see them.
 ```
 
-A story's components are, in order: the `mcComponentIds` it names, then the component it renders as the CLI knows it — its sidecar's `infa.componentId`, `.infa/components.yml`, the legacy `@infa-component` annotation, and finally the one board component whose views were published from that file. Options: `--out <file>`, `--stories <dir>`, `--ids mc_a,mc_b`, `--board <id>`, `--dry-run`, `--json`. To run it as an npm script:
+A story's components are, in order: the `mcComponentIds` it names, then the component it renders as the CLI knows it — its sidecar's `infa.componentId`, `.infa/components.yml`, the legacy `@infa-component` annotation, and finally the one board component whose views were published from that file. Options: `--out <file>`, `--stories <dir>`, `--ids mc_a,mc_b`, `--board <id>`, `--dry-run`, `--json`.
+
+The same sync reads your code for **In code**: every place it renders each story's component (renamed imports, barrels, `UI.Button`, `lazy()`, `styled(Button)` included; tests and stories not), and the route each one is on (Next.js `app/` and `pages/`, React Router), matched to your board's screens. If your design system is its own package used by other repos, point the sync at them: `npx infa storybook sync --in ../shop,../admin` (their imports of your package name count). `--no-code` skips it. In the terminal, `npx infa usages Button` prints the same list. To run it as an npm script:
 
 ```json
 {
@@ -250,6 +254,7 @@ The sync reads, for each component your stories document:
 - **Live render**: views published with `infa publish` carry their interactive render; the panel plays it on demand ("Live"), in a sandbox
 - **Element health**: whether each view's element is still found on the product — Verified, Recovered, Stale, Broken or Removed — as the Infa extension and `infa flow run` last checked it
 - **Flows**: the user flows that use the component (declared on the board, or exercised by their tests), linked to the board
+- **In code** (`code_usages`): every place your code renders the component — file, line, the element, its props, the component it sits in, and the routes it is on (each matched to a board screen when the board has one); read from the repo, not the board
 
 Anything the board does not have is left out, and the panel shows nothing for it. The PAT command (`infa-usage-fetch`) fetches the first six only.
 

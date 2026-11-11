@@ -121,6 +121,7 @@ export const Panel: React.FC<PanelProps> = memo(function UsagePanel(props) {
             onToggleCollapsed={toggleCollapsed}
             boardId={boardId}
             onTagComponents={handleTagComponents}
+            codeRoots={metadata.codeRoots}
           />
         ) : (
           <EmptyState />

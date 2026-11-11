@@ -2,7 +2,7 @@
  * Utility functions for Panel component
  */
 
-import type { ComponentView, Screen, UsageSourceKind, ViewHealthState } from "../../types";
+import type { CodeCallSite, CodeRoot, ComponentView, PropUse, Screen, UsageSourceKind, ViewHealthState } from "../../types";
 
 /**
  * Extracts domain from a URL
@@ -257,4 +257,109 @@ export const groupViewsByDomain = (views: ComponentView[]): UsageGroup[] => {
     group.views.push(view);
   }
   return [...groups.values()];
+};
+
+// --- Code usages: every place the code renders the component ---
+
+/**
+ * A call site's file and line in its repository (GitHub, GitLab), or null
+ * when its root has no remote we can link into.
+ *
+ * @param site - The call site.
+ * @param roots - `_metadata.codeRoots`.
+ */
+export const codeSiteUrl = (site: Pick<CodeCallSite, "file" | "root" | "line">, roots: CodeRoot[] | undefined): string | null => {
+  const repo = roots?.[site.root]?.repository;
+  if (!repo) return null;
+  const base = repo.url.trim().replace(/\/+$/, "").replace(/\.git$/, "");
+  const host = /^https:\/\/(?:www\.)?(github\.com|gitlab\.com)\/[^/]+\/[^/]+$/.exec(base)?.[1];
+  if (!host || !repo.branch) return null;
+  const path = site.file.split("/").map(encodeURIComponent).join("/");
+  const branch = repo.branch.split("/").map(encodeURIComponent).join("/");
+  return `${base}/${host === "gitlab.com" ? "-/blob" : "blob"}/${branch}/${path}#L${site.line}`;
+};
+
+/** A call site's file as the panel names it: prefixed with its repo when it is another one. */
+export const codeSiteFile = (site: Pick<CodeCallSite, "file" | "root">, roots: CodeRoot[] | undefined): string => {
+  const name = site.root > 0 ? roots?.[site.root]?.name : null;
+  return name && name !== "." ? `${name}/${site.file}` : site.file;
+};
+
+export const NO_ROUTE_KEY = "no-route";
+export const NO_ROUTE_TITLE = "Not on a route";
+
+/** A group of call sites: one board screen, one route the board has no screen for, or none. */
+export interface CallSiteGroup {
+  key: string;
+  title: string;
+  kind: "screen" | "route" | "none";
+  screen: Screen | null;
+  screenId: string | null;
+  /** The route's pattern, for a route group or a screen group. */
+  path: string | null;
+  sites: CodeCallSite[];
+}
+
+/**
+ * Call sites grouped by where they are: the board screen their nearest
+ * screen-matched route is, else their nearest route, else "Not on a route".
+ * Screens first (most call sites first), then routes by path, then the rest.
+ *
+ * @param sites - The call sites.
+ * @param screens - The screens the data describes.
+ */
+export const groupCallSites = (sites: CodeCallSite[], screens: Screen[] | undefined): CallSiteGroup[] => {
+  const byId = new Map((screens ?? []).map((s) => [s.screenId, s]));
+  const groups = new Map<string, CallSiteGroup>();
+  for (const site of sites) {
+    const onScreen = site.routes.find((r) => r.screenId);
+    const route = onScreen ?? site.routes[0];
+    let key: string;
+    let group: Omit<CallSiteGroup, "sites">;
+    if (onScreen?.screenId) {
+      const screen = byId.get(onScreen.screenId) ?? null;
+      key = `screen:${onScreen.screenId}`;
+      group = { key, title: screen?.title || onScreen.path, kind: "screen", screen, screenId: onScreen.screenId, path: onScreen.path };
+    } else if (route) {
+      key = `route:${route.kind}:${route.path}`;
+      group = { key, title: route.path, kind: "route", screen: null, screenId: null, path: route.path };
+    } else {
+      key = NO_ROUTE_KEY;
+      group = { key, title: NO_ROUTE_TITLE, kind: "none", screen: null, screenId: null, path: null };
+    }
+    const existing = groups.get(key);
+    if (existing) existing.sites.push(site);
+    else groups.set(key, { ...group, sites: [site] });
+  }
+  const rank = { screen: 0, route: 1, none: 2 } as const;
+  return [...groups.values()].sort(
+    (a, b) =>
+      rank[a.kind] - rank[b.kind] ||
+      (a.kind === "screen" ? b.sites.length - a.sites.length : 0) ||
+      (a.path ?? "").localeCompare(b.path ?? ""),
+  );
+};
+
+/**
+ * How the props are passed, for the summary line: each prop with its most
+ * common literal values (`variant: primary ×8, danger ×3`) when they say
+ * something — a value repeats, or there are few — else how often it is
+ * passed (`label ×8`: free text, every value different).
+ *
+ * @param props - The props, most used first.
+ * @param max - How many props to name.
+ */
+export const describePropUses = (props: PropUse[], max = 4): string[] =>
+  props.slice(0, max).map((p) => {
+    const telling = p.values.length > 0 && (p.values.length <= 4 || (p.values[0]?.count ?? 0) > 1);
+    if (!telling) return `${p.name} ×${p.uses}`;
+    return `${p.name}: ${p.values.slice(0, 4).map((v) => `${v.value} ×${v.count}`).join(", ")}`;
+  });
+
+/** What a call site of each kind is called, beside its element. */
+export const CALL_SITE_KIND_COPY: Record<CodeCallSite["kind"], string | null> = {
+  jsx: null,
+  wrapper: "Wrapper",
+  lazy: "Lazy import",
+  reference: "Passed on",
 };
