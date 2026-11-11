@@ -1,3 +1,15 @@
+# v1.2.3 (Wed Nov 11 2026)
+
+#### 🐛 Bug Fix
+
+- Usage tab: an "In code" section, every place the code renders the component [#11](https://github.com/infa-ai/Infa-storybook/pull/11) ([@desyniq](https://github.com/desyniq))
+
+#### Authors: 1
+
+- Desyniq ([@desyniq](https://github.com/desyniq))
+
+---
+
 # v1.2.2 (Tue Nov 10 2026)
 
 #### 🐛 Bug Fix
